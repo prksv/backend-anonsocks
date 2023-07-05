@@ -7,10 +7,15 @@ use App\Enums\Proxy\ProxyProvider;
 use App\Enums\Proxy\ProxyStatus;
 use App\Enums\Proxy\ProxyType;
 use App\Enums\Proxy\WebshareAccountType;
+use App\Exceptions\CustomException;
 use App\Models\Proxy;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use RecaptchaV2Proxyless;
+use Stripe\Exception\ApiErrorException;
+use Stripe\StripeClient;
 
 class WebshareDriver extends Driver
 {
@@ -46,12 +51,18 @@ class WebshareDriver extends Driver
     /**
      * @throws GuzzleException
      */
-    public function getAllProxies(): array
+    protected function getAllProxies(): array
     {
         $result = [];
-        $response = $this->api->getProxiesList(null, 10000000);
-        foreach ($response as $proxy) {
-            $result[] = $this->formatProxy($proxy);
+
+        $res = $this->api->getProxiesList(null, 100, 1);
+        for ($page = 1; $page <= ceil($res["count"] / 100); $page++) {
+            if ($page != 1) {
+                $res = $this->api->getProxiesList(null, 100, $page);
+            }
+            foreach ($res["results"] as $proxy) {
+                $result[] = $this->formatProxy($proxy);
+            }
         }
         return $result;
     }
@@ -82,13 +93,13 @@ class WebshareDriver extends Driver
         $requestId = $this->api->requestReplacement($ip_addresses, $replace_countries);
         $response = $this->api->getReplacedProxy($requestId);
         $proxies = collect();
-        foreach ($response as $replace) {
-            $proxy = Proxy::where("ip", $replace["proxy"])->first();
+        foreach ($response as $replaced) {
+            $proxy = Proxy::where("ip", $replaced["proxy"])->first();
             $replacedProxy = $proxy->replicate();
 
-            $replacedProxy->ip = $replace["replaced_with"];
-            $replacedProxy->port = $replace["replaced_with_port"];
-            $replacedProxy->country = $replace["replaced_with_country_code"];
+            $replacedProxy->ip = $replaced["replaced_with"];
+            $replacedProxy->port = $replaced["replaced_with_port"];
+            $replacedProxy->country = $replaced["replaced_with_country_code"];
 
             $proxy->update(["status" => ProxyStatus::REPLACED]);
 
@@ -100,38 +111,73 @@ class WebshareDriver extends Driver
     }
 
     /**
-     * @throws GuzzleException
+     * @throws GuzzleException|\Throwable
      */
-    public function getProxies(string $country_code, int $count)
+    public function getProxies(string $country_code, int $count): Collection
     {
         $result = collect();
         $to_replace = collect();
 
-        $result = $result->merge($this->getSuitableFromMainPool($country_code, $count));
+        $suitable_proxy = $this->getSuitableFromMainPool($country_code, $count);
+        $result = $result->merge($suitable_proxy);
 
-        $toPay = $this->api->getPrice([
-            $country_code => $count - $result->count(),
-        ]);
+        $remains = $count - $result->count() - $to_replace->count();
 
-        if ($result->count() < $count) {
-            $to_replace = $to_replace->merge($this->getFromPriorityPool($country_code, $count - $result->count()));
-        }
+        if ($remains > 0) {
+            $available_replaces = $this->api->plan["proxy_replacements_available"];
 
-        if ($result->count() < $count) {
-            if ($toPay["paid_today"] > 2 || $this->api->proxy_replacements_available < $count - $result->count()) {
-                Log::debug("bought");
-                $result = $result->merge($this->buy([$country_code => $count - $result->count()]));
-            } else {
-                $to_replace = $to_replace->merge($this->getFromMainPool($country_code, $count - $result->count()));
+            $pricing = $this->api->getPrice([
+                $country_code => $remains,
+            ]);
+
+            if ($pricing["paid_today"] > 2) {
+                $result = $result->merge($this->buy([$country_code => $remains]));
             }
         }
 
+        $remains = $count - $result->count() - $to_replace->count();
+
+        if ($remains > 0) {
+            $priority_proxy = $this->getFromPriorityPool(
+                $country_code,
+                min($available_replaces, $remains)
+            );
+
+            $available_replaces -= $priority_proxy->count();
+            $to_replace = $to_replace->merge($priority_proxy);
+        }
+
+        $remains = $count - $result->count() - $to_replace->count();
+
+        if ($remains > 0) {
+            $main_proxy = $this->getFromMainPool($country_code, min($available_replaces, $remains));
+            $to_replace = $to_replace->merge($main_proxy);
+        }
+
+        $remains = $count - $result->count() - $to_replace->count();
+
+        if ($remains > 0) {
+            $result = $result->merge($this->buy([$country_code => $remains]));
+        }
+
         if ($to_replace->isNotEmpty()) {
-            Log::debug("replaced");
-            $result = $result->merge($this->makeReplace($to_replace->pluck("ip"), [$country_code => $count]));
+            $to_replace_addresses = $to_replace->pluck("ip")->all();
+            $result = $result->merge(
+                $this->makeReplace($to_replace_addresses, [
+                    $country_code => $count,
+                ])
+            );
         }
 
         return $result;
+    }
+
+    private function getFromMainPool(string $country_code, int $count)
+    {
+        return Proxy::whereProviderAndType(self::$provider_id, $this->proxyType)
+            ->whereNot("country", $country_code)
+            ->limit($count)
+            ->get();
     }
 
     private function getSuitableFromMainPool(string $country_code, int $count)
@@ -151,16 +197,47 @@ class WebshareDriver extends Driver
             ->get();
     }
 
-    private function getFromMainPool(string $country_code, int $count)
+    /**
+     * @throws \Throwable
+     */
+    private function solveCaptcha()
     {
-        return Proxy::whereProviderAndType(self::$provider_id, $this->proxyType)
-            ->whereNot("country", $country_code)
-            ->limit($count)
-            ->get();
+        $api = new RecaptchaV2Proxyless();
+        $api->setKey(config("anticaptcha.api_key"));
+        $api->setWebsiteURL("https://proxy2.webshare.io/subscription/customize");
+        $api->setWebsiteKey(config("webshare.recaptcha_key"));
+
+        throw_if(!$api->createTask(), new CustomException($api->getErrorMessage()));
+
+        $result = $api->waitForResult();
+
+        throw_if(!$result, new CustomException($api->getErrorMessage()));
+
+        return $api->getTaskSolution();
+    }
+
+    /**
+     * @throws ApiErrorException
+     */
+    private function confirmPayment(
+        string $payment_intent,
+        string $payment_method,
+        string $client_secret
+    ): void {
+        $stripe = new StripeClient(config("webshare.stripe_key"));
+        try {
+            $stripe->paymentIntents->confirm(
+                $payment_intent,
+                compact("payment_method", "client_secret")
+            );
+        } catch (ApiErrorException $e) {
+            return;
+        }
     }
 
     /**
      * @throws GuzzleException
+     * @throws \Throwable
      */
     private function buy(array $countries): Collection
     {
@@ -171,9 +248,26 @@ class WebshareDriver extends Driver
             $countries["ZZ"] = $minimumCount - $countOfNeededProxies;
         }
 
-        $exists_results = Proxy::whereIn("country", array_keys($countries))->get();
+        $paymentData = $this->api->buyProxies(
+            $countries,
+            $this->api->getSubscription()["payment_method"],
+            $this->solveCaptcha()
+        );
 
-        $this->api->buyProxies($countries);
+        if ($paymentData["payment_required"]) {
+            $this->confirmPayment(
+                $paymentData["stripe_payment_intent"],
+                $paymentData["stripe_payment_method"],
+                $paymentData["stripe_client_secret"]
+            );
+            $pending_payment = $this->api->pendingPayment($paymentData["pending_payment"]);
+            Log::debug(json_encode($pending_payment, true));
+            $final = $this->api->processPayment($paymentData["pending_payment"], $pending_payment);
+            Log::debug(json_encode($final, true));
+        }
+
+        $exists_results = Proxy::whereIn("country", array_keys($countries))->get();
+        sleep(2);
         $this->sync();
 
         $results_after_sync = Proxy::whereIn("country", array_keys($countries))->get();

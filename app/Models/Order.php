@@ -4,14 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Order extends Model
 {
     use HasFactory;
+    protected $guarded;
 
-    public function proxies(): HasMany
+    public function proxies(): BelongsToMany
     {
-        return $this->hasMany(Proxy::class);
+        return $this->belongsToMany(Proxy::class);
     }
 }

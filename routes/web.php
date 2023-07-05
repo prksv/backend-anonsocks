@@ -1,11 +1,6 @@
 <?php
 
-use App\ApiWrappers\Webshare;
-use App\Enums\Proxy\ProxyProvider;
-use App\Enums\Proxy\ProxyType;
-use App\Enums\Proxy\WebshareAccountType;
 use App\Models\Proxy;
-use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,5 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get("/", function () {
-    return \App\Facades\ProxyManager::getProxies("RU", 2);
+    $collection = collect();
+    $collection = $collection->merge(Proxy::limit(2)->get());
+    dd($collection->count());
 });

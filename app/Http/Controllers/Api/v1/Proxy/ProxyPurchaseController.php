@@ -8,6 +8,7 @@ use App\Http\Requests\ProxyPurchaseRequest;
 use App\Models\Category;
 use App\Services\ProxyService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use LVR\CountryCode\Two;
 
 class ProxyPurchaseController extends ApiController
@@ -37,7 +38,7 @@ class ProxyPurchaseController extends ApiController
             $request->rental_days,
             $request->count
         );
-
-        return $this->okResponse("", $res);
+        Log::debug(json_encode($res));
+        return $this->okResponse("test", $res);
     }
 }

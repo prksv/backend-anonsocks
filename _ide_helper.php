@@ -13051,6 +13051,20 @@
         {
                         return \Illuminate\Http\Request::hasValidSignatureWhileIgnoring($ignoreQuery, $absolute);
         }
+                    /**
+         * 
+         *
+         * @see \Henzeb\Enumhancer\Laravel\Mixins\FormRequestMixin::asEnum()
+         * @param string $key
+         * @param string $class
+         * @param \Henzeb\Enumhancer\Contracts\Mapper|array|string|null $mappers
+         * @return \UnitEnum|null 
+         * @static 
+         */ 
+        public static function asEnum($key, $class, ...$mappers)
+        {
+                        return \Illuminate\Http\Request::asEnum($key, $class, ...$mappers);
+        }
          
     }
             /**
@@ -18634,6 +18648,81 @@
         {
                         return \Illuminate\Http\Request::hasValidSignatureWhileIgnoring($ignoreQuery, $absolute);
         }
+                    /**
+         * 
+         *
+         * @see \Henzeb\Enumhancer\Laravel\Mixins\FormRequestMixin::asEnum()
+         * @param string $key
+         * @param string $class
+         * @param \Henzeb\Enumhancer\Contracts\Mapper|array|string|null $mappers
+         * @return \UnitEnum|null 
+         * @static 
+         */ 
+        public static function asEnum($key, $class, ...$mappers)
+        {
+                        return \Illuminate\Http\Request::asEnum($key, $class, ...$mappers);
+        }
+         
+    }
+     
+}
+
+    namespace Illuminate\Validation { 
+            /**
+     * 
+     *
+     */ 
+        class Rule {
+                    /**
+         * 
+         *
+         * @see \Henzeb\Enumhancer\Laravel\Mixins\RulesMixin::isEnum()
+         * @param string $type
+         * @param \Henzeb\Enumhancer\Contracts\Mapper|array|string|null $mappers
+         * @return \Henzeb\Enumhancer\Laravel\Rules\IsEnum 
+         * @static 
+         */ 
+        public static function isEnum($type, ...$mappers)
+        {
+                        return \Illuminate\Validation\Rule::isEnum($type, ...$mappers);
+        }
+                    /**
+         * 
+         *
+         * @see \Henzeb\Enumhancer\Laravel\Mixins\RulesMixin::enumBitmask()
+         * @param string $type
+         * @param bool $singleBit
+         * @return \Henzeb\Enumhancer\Laravel\Rules\EnumBitmask 
+         * @static 
+         */ 
+        public static function enumBitmask($type, $singleBit = false)
+        {
+                        return \Illuminate\Validation\Rule::enumBitmask($type, $singleBit);
+        }
+                    /**
+         * 
+         *
+         * @see \Henzeb\Enumhancer\Laravel\Mixins\RulesMixin::enumTransition()
+         * @param \UnitEnum $currentState
+         * @param \Henzeb\Enumhancer\Contracts\TransitionHook|null $hook
+         * @return \Henzeb\Enumhancer\Laravel\Rules\EnumTransition 
+         * @static 
+         */ 
+        public static function enumTransition($currentState, $hook = null)
+        {
+                        return \Illuminate\Validation\Rule::enumTransition($currentState, $hook);
+        }
+         
+    }
+     
+}
+
+    namespace Illuminate\Foundation\Http { 
+            /**
+     * 
+     *
+     */ 
+        class FormRequest {
          
     }
      

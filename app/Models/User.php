@@ -52,4 +52,9 @@ class User extends Authenticatable
         throw_if($amount <= 0, new \Exception("Decrement value must be greater than zero."));
         return $this->decrement("balance", $amount);
     }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }

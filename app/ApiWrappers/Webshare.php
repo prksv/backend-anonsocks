@@ -5,6 +5,7 @@ namespace App\ApiWrappers;
 use App\Enums\Proxy\WebshareAccountType;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Support\Facades\Log;
 
 class Webshare
 {
@@ -43,12 +44,13 @@ class Webshare
     /**
      * @throws GuzzleException
      */
-    public function __get(string $attribute)
+    public function __get(string $variable)
     {
-        if (empty($plan)) {
-            $this->plan = $this->getPlan();
+        $func = "get" . ucfirst($variable);
+        if (method_exists($this, $func)) {
+            return $this->$func();
         }
-        return $this->plan[$attribute];
+        return $this->$variable;
     }
 
     /**
@@ -56,16 +58,22 @@ class Webshare
      */
     public function getPlan(): array
     {
-        $response = $this->client->get("subscription/plan/");
-        return json_decode($response->getBody(), true)["results"][0];
+        if (!$this->plan) {
+            $response = $this->client->get("subscription/plan/", [
+                "query" => ["ordering" => "-created_at"],
+            ]);
+            $this->plan = json_decode($response->getBody(), true)["results"][0];
+        }
+
+        return $this->plan;
     }
 
     /**
      * @throws GuzzleException
      */
-    public function getProxiesList(string $country = null, int $count = null): array
+    public function getProxiesList(string $country = null, int $count = null, int $page = 1): array
     {
-        $params = ["mode" => "direct"];
+        $params = ["mode" => "direct", "page" => $page];
 
         if ($country) {
             $params["country_code__in"] = $country;
@@ -79,7 +87,7 @@ class Webshare
         ]);
 
         if ($response->getStatusCode() == 200) {
-            return json_decode($response->getBody(), true)["results"];
+            return json_decode($response->getBody(), true);
         }
         return [];
     }
@@ -135,7 +143,7 @@ class Webshare
 
     public function getPerProxyPrice()
     {
-        return $this->monthly_price / $this->proxy_count;
+        return $this->plan["monthly_price"] / $this->plan["proxy_count"];
     }
 
     /**
@@ -144,10 +152,10 @@ class Webshare
      */
     public function getPrice(array $countries)
     {
-        $proxy_countries = $this->proxy_countries;
+        $proxy_countries = $this->plan["proxy_countries"];
 
         foreach ($countries as $key => $value) {
-            $proxy_countries[$key] += $value;
+            $proxy_countries[$key] = ($proxy_countries[$key] ?? 0) + $value;
         }
 
         $response = $this->client->get("subscription/pricing/", [
@@ -159,7 +167,8 @@ class Webshare
                     "bandwidth_limit" => self::BANWIDTH_LIMIT,
                     "on_demand_refreshes_total" => 0,
                     "automatic_refresh_frequency" => 0,
-                    "proxy_replacements_total" => $this->proxy_replacements_available + array_sum($countries),
+                    "proxy_replacements_total" =>
+                        $this->plan["proxy_replacements_available"] + array_sum($countries),
                     "subusers_total" => 3,
                     "term" => "monthly",
                     "is_unlimited_ip_authorizations" => false,
@@ -174,14 +183,14 @@ class Webshare
     /**
      * @throws GuzzleException
      */
-    public function buyProxies(array $countries)
+    public function buyProxies(array $countries, int $payment_method, string $recaptcha)
     {
-        $proxy_countries = $this->proxy_countries;
+        $proxy_countries = $this->plan["proxy_countries"];
 
         foreach ($countries as $key => $value) {
-            $proxy_countries[$key] += $value;
+            $proxy_countries[$key] = ($proxy_countries[$key] ?? 0) + $value;
         }
-
+        Log::debug(json_encode([$proxy_countries, $this->plan]));
         $response = $this->client->post("subscription/checkout/purchase/", [
             "json" => [
                 "proxy_type" => $this->proxyType,
@@ -190,15 +199,49 @@ class Webshare
                 "bandwidth_limit" => self::BANWIDTH_LIMIT,
                 "on_demand_refreshes_total" => 0,
                 "automatic_refresh_frequency" => 0,
-                "proxy_replacements_total" => $this->proxy_replacements_available + array_sum($countries),
+                "proxy_replacements_total" =>
+                    $this->plan["proxy_replacements_available"] + array_sum($countries),
                 "subusers_total" => 3,
                 "is_unlimited_ip_authorizations" => false,
                 "is_high_concurrency" => false,
                 "is_high_priority_network" => false,
                 "term" => "monthly",
-                "payment_method" => null,
-                "recaptcha" => "eblanus12312",
+                "payment_method" => $payment_method,
+                "recaptcha" => $recaptcha,
             ],
+        ]);
+        Log::debug(json_decode($response->getBody(), true));
+        return json_decode($response->getBody(), true);
+    }
+
+    /**
+     * @throws GuzzleException
+     */
+    public function getSubscription(): array
+    {
+        $response = $this->client->get("subscription/");
+        return json_decode($response->getBody(), true);
+    }
+
+    /**
+     * @throws GuzzleException
+     */
+    public function getPendingPayments(): array
+    {
+        $response = $this->client->get("payment/pending/");
+        return json_decode($response->getBody(), true);
+    }
+
+    public function pendingPayment(int $id)
+    {
+        $response = $this->client->get("payment/pending/${id}/");
+        return json_decode($response->getBody(), true);
+    }
+
+    public function processPayment(int $id, array $data)
+    {
+        $response = $this->client->post("payment/pending/${id}/process/", [
+            "json" => $data,
         ]);
         return json_decode($response->getBody(), true);
     }
