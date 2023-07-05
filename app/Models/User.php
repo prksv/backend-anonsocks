@@ -1,0 +1,55 @@
+<?php
+
+namespace App\Models;
+
+use App\Exceptions\NotEnoughMoney;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+
+class User extends Authenticatable
+{
+    use HasApiTokens, HasFactory, Notifiable;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = ["authorization_token", "balance"];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = ["authorization_token"];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [];
+
+    public static function findByToken(string $token): User|null
+    {
+        $hashed_token = hash("sha256", $token);
+        return self::where("authorization_token", $hashed_token)->first();
+    }
+
+    /**
+     * @throws \Throwable
+     *
+     * @var integer $amount Must be a positive.
+     */
+    public function decrementBalance($amount): bool
+    {
+        throw_if($this->balance < $amount, NotEnoughMoney::class);
+        throw_if($amount <= 0, new \Exception("Decrement value must be greater than zero."));
+        return $this->decrement("balance", $amount);
+    }
+}

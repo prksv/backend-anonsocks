@@ -1,0 +1,117 @@
+openapi: 3.0.3
+info:
+  title: Laravel
+  description: ''
+  version: 1.0.0
+servers:
+  -
+    url: 'http://localhost'
+paths:
+  /api/v1/user/register:
+    post:
+      summary: ''
+      operationId: postApiV1UserRegister
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  /api/v1/user/login:
+    post:
+      summary: ''
+      operationId: postApiV1UserLogin
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                authorization_token:
+                  type: string
+                  description: ''
+                  example: ut
+              required:
+                - authorization_token
+      security: []
+  /api/v1/user:
+    post:
+      summary: ''
+      operationId: postApiV1User
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      security: []
+  /api/v1/proxy/ipv4/premium/buy:
+    get:
+      summary: ''
+      operationId: getApiV1ProxyIpv4PremiumBuy
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: false
+                  message: Unauthenticated.
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                country_code:
+                  type: string
+                  description: ''
+                  example: commodi
+                count:
+                  type: number
+                  description: 'Must be at least 1.'
+                  example: 20
+              required:
+                - country_code
+                - count
+      security: []
+  /api/v1:
+    get:
+      summary: ''
+      operationId: getApiV1
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: ''
+      tags:
+        - Endpoints
+      security: []
+tags:
+  -
+    name: Endpoints
+    description: ''
