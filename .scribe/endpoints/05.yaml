@@ -1,0 +1,80 @@
+name: Deposits
+description: ''
+endpoints:
+  -
+    httpMethods:
+      - GET
+    uri: api/v1/deposit
+    metadata:
+      groupName: Deposits
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Список депозитов'
+      description: 'Получить все депозиты юзера'
+      authenticated: true
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 401
+        content: '{"success":false,"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - POST
+    uri: api/v1/deposit/create
+    metadata:
+      groupName: Deposits
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Создать депозит'
+      description: 'Создает заявку на депозит и возращает URL coinbase оплаты'
+      authenticated: true
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      amount:
+        name: amount
+        description: 'Must be at least 1.'
+        required: true
+        example: 67
+        type: integer
+        custom: []
+    cleanBodyParameters:
+      amount: 67
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []

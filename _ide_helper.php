@@ -10310,6 +10310,83 @@
                         return $instance->setConnectionName($name);
         }
                     /**
+         * Release a reserved job back onto the queue after (n) seconds.
+         *
+         * @param string $queue
+         * @param \Illuminate\Queue\Jobs\DatabaseJobRecord $job
+         * @param int $delay
+         * @return mixed 
+         * @static 
+         */ 
+        public static function release($queue, $job, $delay)
+        {
+                        /** @var \Illuminate\Queue\DatabaseQueue $instance */
+                        return $instance->release($queue, $job, $delay);
+        }
+                    /**
+         * Delete a reserved job from the queue.
+         *
+         * @param string $queue
+         * @param string $id
+         * @return void 
+         * @throws \Throwable
+         * @static 
+         */ 
+        public static function deleteReserved($queue, $id)
+        {
+                        /** @var \Illuminate\Queue\DatabaseQueue $instance */
+                        $instance->deleteReserved($queue, $id);
+        }
+                    /**
+         * Delete a reserved job from the reserved queue and release it.
+         *
+         * @param string $queue
+         * @param \Illuminate\Queue\Jobs\DatabaseJob $job
+         * @param int $delay
+         * @return void 
+         * @static 
+         */ 
+        public static function deleteAndRelease($queue, $job, $delay)
+        {
+                        /** @var \Illuminate\Queue\DatabaseQueue $instance */
+                        $instance->deleteAndRelease($queue, $job, $delay);
+        }
+                    /**
+         * Delete all of the jobs from the queue.
+         *
+         * @param string $queue
+         * @return int 
+         * @static 
+         */ 
+        public static function clear($queue)
+        {
+                        /** @var \Illuminate\Queue\DatabaseQueue $instance */
+                        return $instance->clear($queue);
+        }
+                    /**
+         * Get the queue or return the default.
+         *
+         * @param string|null $queue
+         * @return string 
+         * @static 
+         */ 
+        public static function getQueue($queue)
+        {
+                        /** @var \Illuminate\Queue\DatabaseQueue $instance */
+                        return $instance->getQueue($queue);
+        }
+                    /**
+         * Get the underlying database instance.
+         *
+         * @return \Illuminate\Database\Connection 
+         * @static 
+         */ 
+        public static function getDatabase()
+        {
+                        /** @var \Illuminate\Queue\DatabaseQueue $instance */
+                        return $instance->getDatabase();
+        }
+                    /**
          * Get the backoff for an object-based queue handler.
          *
          * @param mixed $job
@@ -10318,7 +10395,7 @@
          */ 
         public static function getJobBackoff($job)
         {            //Method inherited from \Illuminate\Queue\Queue         
-                        /** @var \Illuminate\Queue\SyncQueue $instance */
+                        /** @var \Illuminate\Queue\DatabaseQueue $instance */
                         return $instance->getJobBackoff($job);
         }
                     /**
@@ -10330,7 +10407,7 @@
          */ 
         public static function getJobExpiration($job)
         {            //Method inherited from \Illuminate\Queue\Queue         
-                        /** @var \Illuminate\Queue\SyncQueue $instance */
+                        /** @var \Illuminate\Queue\DatabaseQueue $instance */
                         return $instance->getJobExpiration($job);
         }
                     /**
@@ -10342,7 +10419,7 @@
          */ 
         public static function createPayloadUsing($callback)
         {            //Method inherited from \Illuminate\Queue\Queue         
-                        \Illuminate\Queue\SyncQueue::createPayloadUsing($callback);
+                        \Illuminate\Queue\DatabaseQueue::createPayloadUsing($callback);
         }
                     /**
          * Get the container instance being used by the connection.
@@ -10352,7 +10429,7 @@
          */ 
         public static function getContainer()
         {            //Method inherited from \Illuminate\Queue\Queue         
-                        /** @var \Illuminate\Queue\SyncQueue $instance */
+                        /** @var \Illuminate\Queue\DatabaseQueue $instance */
                         return $instance->getContainer();
         }
                     /**
@@ -10364,7 +10441,7 @@
          */ 
         public static function setContainer($container)
         {            //Method inherited from \Illuminate\Queue\Queue         
-                        /** @var \Illuminate\Queue\SyncQueue $instance */
+                        /** @var \Illuminate\Queue\DatabaseQueue $instance */
                         $instance->setContainer($container);
         }
          
@@ -18196,7 +18273,232 @@
      
 }
 
-        namespace Spatie\LaravelIgnition\Facades { 
+        namespace Shakurov\Coinbase\Facades { 
+            /**
+     * 
+     *
+     * @see \Shakurov\Coinbase\Coinbase
+     */ 
+        class Coinbase {
+                    /**
+         * Lists all charges.
+         *
+         * @param null|array $query
+         * @return array 
+         * @static 
+         */ 
+        public static function getCharges($query = [])
+        {
+                        /** @var \Shakurov\Coinbase\Coinbase $instance */
+                        return $instance->getCharges($query);
+        }
+                    /**
+         * Creates a new charge.
+         *
+         * @param array $params
+         * @return array 
+         * @static 
+         */ 
+        public static function createCharge($params = [])
+        {
+                        /** @var \Shakurov\Coinbase\Coinbase $instance */
+                        return $instance->createCharge($params);
+        }
+                    /**
+         * Retrieves an existing charge by supplying its id or 8 character short-code.
+         *
+         * @param string $chargeId Id or short-code for a previously created charge
+         * @return array 
+         * @static 
+         */ 
+        public static function getCharge($chargeId)
+        {
+                        /** @var \Shakurov\Coinbase\Coinbase $instance */
+                        return $instance->getCharge($chargeId);
+        }
+                    /**
+         * Cancels an existing charge by supplying its id or 8 character short-code.
+         * 
+         * <b>Note:</b> Only new charges can be successfully canceled.
+         *
+         * @param string $chargeId Id or short-code for a previously created charge
+         * @return array 
+         * @static 
+         */ 
+        public static function cancelCharge($chargeId)
+        {
+                        /** @var \Shakurov\Coinbase\Coinbase $instance */
+                        return $instance->cancelCharge($chargeId);
+        }
+                    /**
+         * Resolves an existing, unresolved charge by supplying its id or 8 character short-code.
+         * 
+         * <b>Note:</b> Only unresolved charges can be successfully resolved.
+         *
+         * @param string $chargeId Id or short-code for a previously created charge
+         * @return array 
+         * @static 
+         */ 
+        public static function resolveCharge($chargeId)
+        {
+                        /** @var \Shakurov\Coinbase\Coinbase $instance */
+                        return $instance->resolveCharge($chargeId);
+        }
+                    /**
+         * Lists all checkouts.
+         *
+         * @param null|array $query
+         * @return array 
+         * @static 
+         */ 
+        public static function getCheckouts($query = [])
+        {
+                        /** @var \Shakurov\Coinbase\Coinbase $instance */
+                        return $instance->getCheckouts($query);
+        }
+                    /**
+         * Creates a new checkout.
+         *
+         * @param array $params
+         * @return array 
+         * @static 
+         */ 
+        public static function createCheckout($params = [])
+        {
+                        /** @var \Shakurov\Coinbase\Coinbase $instance */
+                        return $instance->createCheckout($params);
+        }
+                    /**
+         * Retrieves an existing checkout.
+         *
+         * @param string $checkoutId
+         * @return array 
+         * @static 
+         */ 
+        public static function getCheckout($checkoutId)
+        {
+                        /** @var \Shakurov\Coinbase\Coinbase $instance */
+                        return $instance->getCheckout($checkoutId);
+        }
+                    /**
+         * Updates an existing checkout.
+         *
+         * @param string $checkoutId
+         * @param array $params
+         * @return array 
+         * @static 
+         */ 
+        public static function updateCheckout($checkoutId, $params = [])
+        {
+                        /** @var \Shakurov\Coinbase\Coinbase $instance */
+                        return $instance->updateCheckout($checkoutId, $params);
+        }
+                    /**
+         * Deletes an existing checkout.
+         *
+         * @param string $checkoutId
+         * @return array 
+         * @static 
+         */ 
+        public static function deleteCheckout($checkoutId)
+        {
+                        /** @var \Shakurov\Coinbase\Coinbase $instance */
+                        return $instance->deleteCheckout($checkoutId);
+        }
+                    /**
+         * Lists all invoices.
+         *
+         * @param null|array $query
+         * @return array 
+         * @static 
+         */ 
+        public static function getInvoices($query = [])
+        {
+                        /** @var \Shakurov\Coinbase\Coinbase $instance */
+                        return $instance->getInvoices($query);
+        }
+                    /**
+         * Creates a new invoice.
+         *
+         * @param array $params
+         * @return array 
+         * @static 
+         */ 
+        public static function createInvoice($params = [])
+        {
+                        /** @var \Shakurov\Coinbase\Coinbase $instance */
+                        return $instance->createInvoice($params);
+        }
+                    /**
+         * Retrieves an existing invoice by supplying its id or 8 character short-code.
+         *
+         * @param string $invoiceId Id or short-code for a previously created invoice
+         * @return array 
+         * @static 
+         */ 
+        public static function getInvoice($invoiceId)
+        {
+                        /** @var \Shakurov\Coinbase\Coinbase $instance */
+                        return $instance->getInvoice($invoiceId);
+        }
+                    /**
+         * Voids an existing invoice by supplying its id or 8 character short-code.
+         * 
+         * <b>Note:</b> Only invoices with OPEN or VIEWED status can be voided.
+         *
+         * @param string $invoiceId Id or short-code for a previously created invoice
+         * @return array 
+         * @static 
+         */ 
+        public static function voidInvoice($invoiceId)
+        {
+                        /** @var \Shakurov\Coinbase\Coinbase $instance */
+                        return $instance->voidInvoice($invoiceId);
+        }
+                    /**
+         * Resolves an existing, unresolved invoice by supplying its id or 8 character short-code.
+         * 
+         * <b>Note:</b> Only invoices with an unresolved charge can be successfully resolved.
+         *
+         * @param string $invoiceId Id or short-code for a previously created invoice
+         * @return array 
+         * @static 
+         */ 
+        public static function resolveInvoice($invoiceId)
+        {
+                        /** @var \Shakurov\Coinbase\Coinbase $instance */
+                        return $instance->resolveInvoice($invoiceId);
+        }
+                    /**
+         * Lists all events.
+         *
+         * @param null|array $query
+         * @return array 
+         * @static 
+         */ 
+        public static function getEvents($query = [])
+        {
+                        /** @var \Shakurov\Coinbase\Coinbase $instance */
+                        return $instance->getEvents($query);
+        }
+                    /**
+         * Retrieves an existing event.
+         *
+         * @param string $eventId
+         * @return array 
+         * @static 
+         */ 
+        public static function getEvent($eventId)
+        {
+                        /** @var \Shakurov\Coinbase\Coinbase $instance */
+                        return $instance->getEvent($eventId);
+        }
+         
+    }
+     
+}
+
+    namespace Spatie\LaravelIgnition\Facades { 
             /**
      * 
      *
@@ -18578,6 +18880,37 @@
         {
                         /** @var \Spatie\FlareClient\Flare $instance */
                         return $instance->group($groupName, $properties);
+        }
+         
+    }
+     
+}
+
+    namespace Spatie\UrlSigner\Laravel\Facades { 
+            /**
+     * 
+     *
+     */ 
+        class UrlSigner {
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function sign($url, $expiration = null, $signatureKey = null)
+        {
+                        /** @var \Spatie\UrlSigner\Laravel\UrlSigner $instance */
+                        return $instance->sign($url, $expiration, $signatureKey);
+        }
+                    /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function validate($url, $signatureKey = null)
+        {            //Method inherited from \Spatie\UrlSigner\BaseUrlSigner         
+                        /** @var \Spatie\UrlSigner\Laravel\UrlSigner $instance */
+                        return $instance->validate($url, $signatureKey);
         }
          
     }
@@ -22590,7 +22923,9 @@ namespace  {
             class Validator extends \Illuminate\Support\Facades\Validator {}
             class View extends \Illuminate\Support\Facades\View {}
             class Vite extends \Illuminate\Support\Facades\Vite {}
+            class Coinbase extends \Shakurov\Coinbase\Facades\Coinbase {}
             class Flare extends \Spatie\LaravelIgnition\Facades\Flare {}
+            class UrlSigner extends \Spatie\UrlSigner\Laravel\Facades\UrlSigner {}
      
 }
 

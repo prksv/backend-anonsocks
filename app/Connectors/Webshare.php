@@ -1,8 +1,9 @@
 <?php
 
-namespace App\ApiWrappers;
+namespace App\Connectors;
 
 use App\Enums\Proxy\WebshareAccountType;
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Log;
@@ -13,6 +14,36 @@ class Webshare
     const BANWIDTH_LIMIT = 250;
     private string $api_key;
     private Client $client;
+    /**
+     *  @var $plan array{
+     *       id: number,
+     *       bandwidth_limit: number,
+     *       monthly_price: number,
+     *       yearly_price: number,
+     *       proxy_type: string,
+     *       proxy_subtype: string,
+     *       proxy_count: number,
+     *       proxy_countries: array,
+     *        required_site_checks: string[],
+     *       on_demand_refreshes_total: number,
+     *       on_demand_refreshes_used: number,
+     *       on_demand_refreshes_available: number,
+     *       automatic_refresh_frequency: number,
+     *       automatic_refresh_last_at: mixed,
+     *       automatic_refresh_next_at: mixed,
+     *       proxy_replacements_total: number,
+     *       proxy_replacements_used: number,
+     *       proxy_replacements_available: number,
+     *       subusers_total: number,
+     *       subusers_used: number,
+     *       subusers_available: number,
+     *       is_unlimited_ip_authorizations: boolean,
+     *       is_high_concurrency: boolean,
+     *       is_high_priority_network: boolean,
+     *       created_at: string,
+     *       updated_at: string
+        }
+     */
     private array $plan = [];
     private WebshareAccountType $accountType;
     private string $proxyType;
@@ -121,6 +152,7 @@ class Webshare
                 "replace_with" => $replace_with,
             ],
         ]);
+        Log::debug(json_encode(json_decode($response->getBody(), true)));
         return json_decode($response->getBody(), true)["id"];
     }
 
@@ -141,9 +173,12 @@ class Webshare
         return json_decode($response->getBody(), true)["results"];
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function getPerProxyPrice()
     {
-        return $this->plan["monthly_price"] / $this->plan["proxy_count"];
+        return $this->getPlan()["monthly_price"] / $this->getPlan()["proxy_count"];
     }
 
     /**
@@ -152,7 +187,7 @@ class Webshare
      */
     public function getPrice(array $countries)
     {
-        $proxy_countries = $this->plan["proxy_countries"];
+        $proxy_countries = $this->getPlan()["proxy_countries"];
 
         foreach ($countries as $key => $value) {
             $proxy_countries[$key] = ($proxy_countries[$key] ?? 0) + $value;
@@ -168,7 +203,7 @@ class Webshare
                     "on_demand_refreshes_total" => 0,
                     "automatic_refresh_frequency" => 0,
                     "proxy_replacements_total" =>
-                        $this->plan["proxy_replacements_available"] + array_sum($countries),
+                        $this->getPlan()["proxy_replacements_available"] + array_sum($countries),
                     "subusers_total" => 3,
                     "term" => "monthly",
                     "is_unlimited_ip_authorizations" => false,
@@ -185,12 +220,12 @@ class Webshare
      */
     public function buyProxies(array $countries, int $payment_method, string $recaptcha)
     {
-        $proxy_countries = $this->plan["proxy_countries"];
+        $proxy_countries = $this->getPlan()["proxy_countries"];
 
         foreach ($countries as $key => $value) {
             $proxy_countries[$key] = ($proxy_countries[$key] ?? 0) + $value;
         }
-        Log::debug(json_encode([$proxy_countries, $this->plan]));
+
         $response = $this->client->post("subscription/checkout/purchase/", [
             "json" => [
                 "proxy_type" => $this->proxyType,
@@ -200,7 +235,7 @@ class Webshare
                 "on_demand_refreshes_total" => 0,
                 "automatic_refresh_frequency" => 0,
                 "proxy_replacements_total" =>
-                    $this->plan["proxy_replacements_available"] + array_sum($countries),
+                    $this->getPlan()["proxy_replacements_available"] + array_sum($countries),
                 "subusers_total" => 3,
                 "is_unlimited_ip_authorizations" => false,
                 "is_high_concurrency" => false,

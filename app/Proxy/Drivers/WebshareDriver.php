@@ -2,7 +2,7 @@
 
 namespace App\Proxy\Drivers;
 
-use App\ApiWrappers\Webshare;
+use App\Connectors\Webshare;
 use App\Enums\Proxy\ProxyProvider;
 use App\Enums\Proxy\ProxyStatus;
 use App\Enums\Proxy\ProxyType;
@@ -39,7 +39,9 @@ class WebshareDriver extends Driver
         $accountType = match ($proxyType) {
             ProxyType::IPV4_PREMIUM => WebshareAccountType::PREMIUM,
             ProxyType::IPV4_SHARED => WebshareAccountType::DEFAULT,
-            ProxyType::IPV4_SHARED_FREE => throw new \Exception("To be implemented"),
+            ProxyType::IPV4_SHARED_FREE => throw new \Exception(
+                "This driver does not support {$proxyType->name}"
+            ),
         };
 
         $this->proxyType = $proxyType;
@@ -89,12 +91,13 @@ class WebshareDriver extends Driver
      */
     public function makeReplace(array $ip_addresses = [], array $replace_countries = []): Collection
     {
-        Log::debug(json_encode($replace_countries));
         $requestId = $this->api->requestReplacement($ip_addresses, $replace_countries);
-        $response = $this->api->getReplacedProxy($requestId);
+        while (empty(($response = $this->api->getReplacedProxy($requestId)))) {
+            sleep(3);
+        }
         $proxies = collect();
         foreach ($response as $replaced) {
-            $proxy = Proxy::where("ip", $replaced["proxy"])->first();
+            $proxy = Proxy::firstWhere("ip", $replaced["proxy"]);
             $replacedProxy = $proxy->replicate();
 
             $replacedProxy->ip = $replaced["replaced_with"];
@@ -105,8 +108,9 @@ class WebshareDriver extends Driver
 
             $replacedProxy->save();
 
-            $proxies = $proxies->merge($replacedProxy);
+            $proxies = $proxies->merge([$replacedProxy]);
         }
+        Log::debug(json_encode($proxies->pluck("id")->all()));
         return $proxies;
     }
 
@@ -115,86 +119,54 @@ class WebshareDriver extends Driver
      */
     public function getProxies(string $country_code, int $count): Collection
     {
-        $result = collect();
-        $to_replace = collect();
-
-        $suitable_proxy = $this->getSuitableFromMainPool($country_code, $count);
-        $result = $result->merge($suitable_proxy);
-
-        $remains = $count - $result->count() - $to_replace->count();
-
-        if ($remains > 0) {
-            $available_replaces = $this->api->plan["proxy_replacements_available"];
-
-            $pricing = $this->api->getPrice([
-                $country_code => $remains,
-            ]);
-
-            if ($pricing["paid_today"] > 2) {
-                $result = $result->merge($this->buy([$country_code => $remains]));
-            }
-        }
-
-        $remains = $count - $result->count() - $to_replace->count();
-
-        if ($remains > 0) {
-            $priority_proxy = $this->getFromPriorityPool(
-                $country_code,
-                min($available_replaces, $remains)
-            );
-
-            $available_replaces -= $priority_proxy->count();
-            $to_replace = $to_replace->merge($priority_proxy);
-        }
-
-        $remains = $count - $result->count() - $to_replace->count();
-
-        if ($remains > 0) {
-            $main_proxy = $this->getFromMainPool($country_code, min($available_replaces, $remains));
-            $to_replace = $to_replace->merge($main_proxy);
-        }
-
-        $remains = $count - $result->count() - $to_replace->count();
-
-        if ($remains > 0) {
-            $result = $result->merge($this->buy([$country_code => $remains]));
-        }
-
-        if ($to_replace->isNotEmpty()) {
-            $to_replace_addresses = $to_replace->pluck("ip")->all();
-            $result = $result->merge(
-                $this->makeReplace($to_replace_addresses, [
-                    $country_code => $count,
-                ])
-            );
-        }
-
-        return $result;
-    }
-
-    private function getFromMainPool(string $country_code, int $count)
-    {
-        return Proxy::whereProviderAndType(self::$provider_id, $this->proxyType)
-            ->whereNot("country", $country_code)
-            ->limit($count)
-            ->get();
-    }
-
-    private function getSuitableFromMainPool(string $country_code, int $count)
-    {
-        return Proxy::whereProviderAndType(self::$provider_id, $this->proxyType)
+        $proxies = Proxy::available()
+            ->whereProviderAndType(self::$provider_id, $this->proxyType)
             ->where("country", $country_code)
             ->limit($count)
             ->get();
-    }
+        Log::debug(json_encode([$proxies]));
+        if ($proxies->count() >= $count) {
+            return $proxies;
+        }
 
-    private function getFromPriorityPool(string $country_code, int $count)
-    {
-        return Proxy::whereProviderAndType(self::$provider_id, $this->proxyType)
-            ->fromPriorityPool()
-            ->whereNot("country", $country_code)
-            ->limit($count)
+        $countries = [$country_code => $count - $proxies->count()];
+
+        $pricing = $this->api->getPrice($countries);
+
+        if ($pricing["paid_today"] >= 2) {
+            return $proxies->merge($this->buy($countries));
+        }
+
+        $priority_proxies = Proxy::fromPriorityPool()->get();
+
+        $other_proxies = Proxy::available()
+            ->whereNotIn("id", $priority_proxies->merge($proxies))
             ->get();
+
+        $to_replace = $priority_proxies->merge($other_proxies);
+
+        $available_replaces = min(
+            $this->api->plan["proxy_replacements_available"],
+            array_sum($countries)
+        );
+
+        $replaced_proxies = $this->makeReplace(
+            $to_replace
+                ->take($available_replaces)
+                ->pluck("ip")
+                ->all(),
+            [
+                $country_code => $available_replaces,
+            ]
+        );
+
+        $proxies = $proxies->merge($replaced_proxies);
+
+        if ($proxies->count() <= $count) {
+            $proxies = $proxies->merge($this->buy([$country_code => $count - $proxies->count()]));
+        }
+
+        return $proxies;
     }
 
     /**
@@ -241,33 +213,31 @@ class WebshareDriver extends Driver
      */
     private function buy(array $countries): Collection
     {
-        $minimumCount = floor(1 / $this->api->getPerProxyPrice());
-        $countOfNeededProxies = array_sum($countries);
+        $minimum_count = floor(1 / $this->api->getPerProxyPrice());
+        $required_count = array_sum($countries);
 
-        if ($countOfNeededProxies < $minimumCount) {
-            $countries["ZZ"] = $minimumCount - $countOfNeededProxies;
+        if ($required_count < $minimum_count) {
+            $countries["ZZ"] = $minimum_count - $required_count;
         }
 
-        $paymentData = $this->api->buyProxies(
+        $payment = $this->api->buyProxies(
             $countries,
             $this->api->getSubscription()["payment_method"],
             $this->solveCaptcha()
         );
 
-        if ($paymentData["payment_required"]) {
+        if ($payment["payment_required"]) {
             $this->confirmPayment(
-                $paymentData["stripe_payment_intent"],
-                $paymentData["stripe_payment_method"],
-                $paymentData["stripe_client_secret"]
+                $payment["stripe_payment_intent"],
+                $payment["stripe_payment_method"],
+                $payment["stripe_client_secret"]
             );
-            $pending_payment = $this->api->pendingPayment($paymentData["pending_payment"]);
-            Log::debug(json_encode($pending_payment, true));
-            $final = $this->api->processPayment($paymentData["pending_payment"], $pending_payment);
-            Log::debug(json_encode($final, true));
+            $pending_payment = $this->api->pendingPayment($payment["pending_payment"]);
+            $this->api->processPayment($payment["pending_payment"], $pending_payment);
         }
 
         $exists_results = Proxy::whereIn("country", array_keys($countries))->get();
-        sleep(2);
+
         $this->sync();
 
         $results_after_sync = Proxy::whereIn("country", array_keys($countries))->get();

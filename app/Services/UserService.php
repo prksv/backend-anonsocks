@@ -37,7 +37,7 @@ class UserService
     /**
      * @throws \Throwable
      */
-    public function login(string $token): array
+    public function login(string $token)
     {
         $user = User::findByToken($token);
 
@@ -45,6 +45,8 @@ class UserService
 
         $token = $user->createToken("access");
 
-        return $user->toArray() + ["access_token" => $token->plainTextToken];
+        $user->access_token = $token->plainTextToken;
+
+        return $user;
     }
 }

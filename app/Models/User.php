@@ -6,6 +6,8 @@ use App\Exceptions\NotEnoughMoney;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -46,15 +48,21 @@ class User extends Authenticatable
      *
      * @var integer $amount Must be a positive.
      */
-    public function decrementBalance($amount): bool
+    public function decrementBalance(int $amount): bool
     {
         throw_if($this->balance < $amount, NotEnoughMoney::class);
         throw_if($amount <= 0, new \Exception("Decrement value must be greater than zero."));
+
         return $this->decrement("balance", $amount);
     }
 
-    public function orders()
+    public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function deposits(): HasMany
+    {
+        return $this->hasMany(Deposit::class);
     }
 }

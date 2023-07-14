@@ -16,24 +16,21 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         Category::create([
-            'name' => 'ipv6_64',
-            'price' => 0.13,
-            'proxy_type_id' => ProxyType::IPV4_SHARED,
-            'proxy_provider_id' => ProxyProvider::WEBSHARE
+            "name" => "ipv6_64",
+            "proxy_type_id" => ProxyType::IPV4_SHARED,
+            "proxy_provider_id" => ProxyProvider::WEBSHARE,
         ]);
 
         Category::create([
-            'name' => 'ipv4_free',
-            'price' => 0,
-            'proxy_type_id' => ProxyType::IPV4_SHARED_FREE,
-            'proxy_provider_id' => ProxyProvider::WEBSHARE
+            "name" => "ipv4_free",
+            "proxy_type_id" => ProxyType::IPV4_SHARED_FREE,
+            "proxy_provider_id" => ProxyProvider::WEBSHARE,
         ]);
 
         Category::create([
-            'name' => 'ipv4_premium',
-            'price' => 1.99,
-            'proxy_type_id' => ProxyType::IPV4_PREMIUM,
-            'proxy_provider_id' => ProxyProvider::WEBSHARE
+            "name" => "ipv4_premium",
+            "proxy_type_id" => ProxyType::IPV4_PREMIUM,
+            "proxy_provider_id" => ProxyProvider::WEBSHARE,
         ]);
     }
 }

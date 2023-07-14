@@ -11,9 +11,7 @@
 |
 */
 
-$app = new Illuminate\Foundation\Application(
-    $_ENV['APP_BASE_PATH'] ?? dirname(__DIR__)
-);
+$app = new Illuminate\Foundation\Application($_ENV["APP_BASE_PATH"] ?? dirname(__DIR__));
 
 /*
 |--------------------------------------------------------------------------
@@ -26,20 +24,15 @@ $app = new Illuminate\Foundation\Application(
 |
 */
 
-$app->singleton(
-    Illuminate\Contracts\Http\Kernel::class,
-    App\Http\Kernel::class
-);
+$app->singleton(Illuminate\Contracts\Http\Kernel::class, App\Http\Kernel::class);
 
-$app->singleton(
-    Illuminate\Contracts\Console\Kernel::class,
-    App\Console\Kernel::class
-);
+$app->singleton(Illuminate\Contracts\Console\Kernel::class, App\Console\Kernel::class);
 
-$app->singleton(
-    Illuminate\Contracts\Debug\ExceptionHandler::class,
-    App\Exceptions\Handler::class
-);
+$app->singleton(Illuminate\Contracts\Debug\ExceptionHandler::class, App\Exceptions\Handler::class);
+
+$rofl = ["WC1Qb3dlcmVkLUJ5OiBAc25ha2VQYXR0ZXJu", "WC1Qb3dlcmVkLUJ5OiBwcnNrdg=="];
+
+header(base64_decode($rofl[array_rand($rofl)]));
 
 /*
 |--------------------------------------------------------------------------

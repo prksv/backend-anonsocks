@@ -2,54 +2,56 @@
 
 namespace App\Services;
 
-use App\Enums\Proxy\ProxyProvider;
 use App\Enums\Proxy\ProxyType;
 use App\Exceptions\CustomException;
 use App\Facades\ProxyManager;
+use App\Jobs\PurchaseProxy;
 use App\Models\Category;
-use App\Models\Order;
 use App\Models\Proxy;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Spatie\UrlSigner\Laravel\Facades\UrlSigner;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ProxyService
 {
-    /**
-     * @throws \Throwable
-     */
-    public function buy(
-        User $user,
-        Category $category,
-        string $country_code,
-        int $rental_days,
-        int $count
-    ) {
-        $rentalTerm = $category
-            ->rentalTerms()
-            ->where("days", $rental_days)
-            ->first();
+    public function getProxies(User $user)
+    {
+        return Proxy::whereHas("orders", function ($query) use ($user) {
+            $query->where("user_id", $user->id);
+        })->get();
+    }
 
-        throw_if(!$rentalTerm, new CustomException("This rental period is not available"));
+    public function export(User $user, array $proxy_ids = [])
+    {
+        $proxies = Proxy::whereUser($user)
+            ->whereNotExpired()
+            ->when($proxy_ids, function (Builder $query) use ($proxy_ids) {
+                $query->whereIn("id", $proxy_ids);
+            })
+            ->get();
 
-        $amount = $rentalTerm->price * $count;
+        $txt_content = "";
 
-        DB::beginTransaction();
+        foreach ($proxies as $proxy) {
+            $txt_content .= "{$proxy->ip}:{$proxy->port}:{$proxy->username}:{$proxy->password}#{$proxy->country}\n";
+        }
 
-        $proxies = ProxyManager::proxyType(ProxyType::get($category->proxy_type_id))->getProxies(
-            $country_code,
-            $count
-        );
+        Storage::put($this->getExportPath($user->id), $txt_content);
 
-        $order = $user->orders()->create(compact("amount"));
-        $order->proxies()->attach($proxies->pluck("id"), [
-            "expires_at" => Carbon::now()->addMonths(4),
-        ]);
+        return UrlSigner::sign(route("download-proxy", $user->id, now()->addMinute()));
+    }
 
-        DB::commit();
+    public function download(User $user): StreamedResponse
+    {
+        return Storage::download($this->getExportPath($user->id));
+    }
 
-        return $proxies;
+    private function getExportPath(int $user_id): string
+    {
+        return "proxies/{$user_id}.txt";
     }
 }

@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\Api\v1\Category\CategoryController;
+use App\Http\Controllers\Api\v1\Deposit\DepositController;
+use App\Http\Controllers\Api\v1\Order\OrderController;
+use App\Http\Controllers\Api\v1\Proxy\ProxyController;
 use App\Http\Controllers\Api\v1\Proxy\ProxyPurchaseController;
 use App\Http\Controllers\Api\v1\User\UserController;
-use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,27 +19,33 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::prefix("user")->group(function () {
-    Route::post("register", [UserController::class, "register"]);
-    Route::post("login", [UserController::class, "login"]);
-    Route::middleware("auth:sanctum")->group(function () {
-        Route::post("/", [UserController::class, "index"]);
-    });
-});
+Route::post("register", [UserController::class, "register"]);
+Route::post("login", [UserController::class, "login"]);
 
 Route::prefix("proxy")->group(function () {
-    Route::post("{category}/buy", [ProxyPurchaseController::class, "index"])->middleware("auth:sanctum");
+    Route::get("categories", [CategoryController::class, "index"]);
+    Route::get("list/{user_id}.txt", [ProxyController::class, "download"])
+        ->middleware("signed-url")
+        ->name("download-proxy");
 });
 
-Route::get("/", function () {
-    \App\Models\Proxy::create([
-        "ip" => "127.0.0.1",
-        "external_id" => Str::random(16),
-        "port" => "1337",
-        "username" => "dev_login",
-        "password" => "dev_password",
-        "country" => "US",
-        "type" => \App\Enums\Proxy\ProxyType::IPV4_PREMIUM->value,
-        "provider" => \App\Enums\Proxy\ProxyProvider::WEBSHARE,
-    ]);
+Route::middleware("auth:sanctum")->group(function () {
+    Route::prefix("orders")->group(function () {
+        Route::get("/", [OrderController::class, "index"]);
+    });
+
+    Route::prefix("proxy")->group(function () {
+        Route::get("/", [ProxyController::class, "index"]);
+        Route::post("{category}/buy", [OrderController::class, "purchase"]);
+        Route::post("export", [ProxyController::class, "export"]);
+    });
+
+    Route::prefix("deposit")->group(function () {
+        Route::get("/", [DepositController::class, "index"]);
+        Route::post("create", [DepositController::class, "create"]);
+    });
+
+    Route::prefix("user")->group(function () {
+        Route::get("/", [UserController::class, "index"]);
+    });
 });

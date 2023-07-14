@@ -1,7 +1,13 @@
 <?php
 
+use App\Connectors\Webshare;
+use App\Enums\Proxy\ProxyType;
+use App\Enums\Proxy\WebshareAccountType;
+use App\Facades\ProxyManager;
 use App\Models\Proxy;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,7 +21,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get("/", function () {
-    $collection = collect();
-    $collection = $collection->merge(Proxy::limit(2)->get());
-    dd($collection->count());
+    return \Spatie\UrlSigner\Laravel\Facades\UrlSigner::sign(url("test"), now()->addMinute());
 });
+
+Route::get("/test", function () {
+    return "yay";
+})->middleware("signed-url");
