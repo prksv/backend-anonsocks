@@ -1,7 +1,7 @@
 <?php
 
-class AntiGate extends Anticaptcha implements AntiCaptchaTaskProtocol {
-
+class AntiGate extends Anticaptcha implements AntiCaptchaTaskProtocol
+{
     private $websiteUrl;
     private $templateName;
     private $domainsOfInterest = [];
@@ -10,67 +10,77 @@ class AntiGate extends Anticaptcha implements AntiCaptchaTaskProtocol {
     private $proxyPort;
     private $proxyLogin;
     private $proxyPassword;
-    
-    public function getPostData() {
-        return array(
-            "type"                      =>  "AntiGateTask",
-            "templateName"              =>  $this->templateName,
-            "websiteURL"                =>  $this->websiteUrl,
-            "domainsOfInterest"         =>  $this->domainsOfInterest,
-            "variables"                 =>  $this->variables,
-            "proxyAddress"              =>  $this->proxyAddress,
-            "proxyPort"                 =>  $this->proxyPort,
-            "proxyLogin"                =>  $this->proxyLogin,
-            "proxyPassword"             =>  $this->proxyPassword
-        );
+
+    public function getPostData()
+    {
+        return [
+            "type" => "AntiGateTask",
+            "templateName" => $this->templateName,
+            "websiteURL" => $this->websiteUrl,
+            "domainsOfInterest" => $this->domainsOfInterest,
+            "variables" => $this->variables,
+            "proxyAddress" => $this->proxyAddress,
+            "proxyPort" => $this->proxyPort,
+            "proxyLogin" => $this->proxyLogin,
+            "proxyPassword" => $this->proxyPassword,
+        ];
     }
-    
-    public function setTaskInfo($taskInfo) {
+
+    public function setTaskInfo($taskInfo)
+    {
         $this->taskInfo = $taskInfo;
     }
-    
-    public function getTaskSolution() {
+
+    public function getTaskSolution()
+    {
         return $this->taskInfo->solution;
     }
-    
-    public function setWebsiteURL($value) {
+
+    public function setWebsiteURL($value)
+    {
         $this->websiteUrl = $value;
     }
-    
-    public function setTemplateName($value) {
+
+    public function setTemplateName($value)
+    {
         if (!is_string($value)) {
             echo "AntiGate template name must be a string!";
-            exit;
+            exit();
         }
         $this->templateName = $value;
     }
-    
-    public function setDomainsOfInterest($value) {
+
+    public function setDomainsOfInterest($value)
+    {
         $this->domainsOfInterest = $value;
     }
-    
-    public function setVariables($values) {
+
+    public function setVariables($values)
+    {
         if (!is_array($values)) {
             echo "AntiGate variables must be an array!";
-            exit;
+            exit();
         }
         $this->variables = $values;
     }
-    
-    public function setProxyAddress($value) {
+
+    public function setProxyAddress($value)
+    {
         $this->proxyAddress = $value;
     }
-    
-    public function setProxyPort($value) {
+
+    public function setProxyPort($value)
+    {
         $this->proxyPort = $value;
     }
-    
-    public function setProxyLogin($value) {
+
+    public function setProxyLogin($value)
+    {
         $this->proxyLogin = $value;
     }
-    
-    public function setProxyPassword($value) {
+
+    public function setProxyPassword($value)
+    {
         $this->proxyPassword = $value;
     }
-    
 }

@@ -4,15 +4,14 @@ info:
   description: ''
   version: 1.0.0
 servers:
-  -
-    url: 'http://127.0.0.1:8000'
+  - url: 'http://127.0.0.1:8000'
 paths:
   /api/v1/proxy/categories:
     get:
       summary: 'Список категорий'
       operationId: ''
       description: 'Получить категории проксей'
-      parameters: []
+      parameters: [ ]
       responses:
         200:
           description: ''
@@ -24,21 +23,17 @@ paths:
                   success: true
                   message: 'Categories list'
                   data:
-                    -
-                      name: ipv6_64
+                    - name: ipv6_64
                       available: 1
                       rental_terms:
-                        -
-                          days: 1
+                        - days: 1
                           price: 1
-                    -
-                      name: ipv4_free
+                    - name: ipv4_free
                       available: 1
-                      rental_terms: []
-                    -
-                      name: ipv4_premium
+                      rental_terms: [ ]
+                    - name: ipv4_premium
                       available: 1
-                      rental_terms: []
+                      rental_terms: [ ]
                 properties:
                   success:
                     type: boolean
@@ -49,21 +44,17 @@ paths:
                   data:
                     type: array
                     example:
-                      -
-                        name: ipv6_64
+                      - name: ipv6_64
                         available: 1
                         rental_terms:
-                          -
-                            days: 1
+                          - days: 1
                             price: 1
-                      -
-                        name: ipv4_free
+                      - name: ipv4_free
                         available: 1
-                        rental_terms: []
-                      -
-                        name: ipv4_premium
+                        rental_terms: [ ]
+                      - name: ipv4_premium
                         available: 1
-                        rental_terms: []
+                        rental_terms: [ ]
                     items:
                       type: object
                       properties:
@@ -76,8 +67,7 @@ paths:
                         rental_terms:
                           type: array
                           example:
-                            -
-                              days: 1
+                            - days: 1
                               price: 1
                           items:
                             type: object
@@ -90,13 +80,13 @@ paths:
                                 example: 1
       tags:
         - Category
-      security: []
+      security: [ ]
   /api/v1/deposit:
     get:
       summary: 'Список депозитов'
       operationId: ''
       description: 'Получить все депозиты юзера'
-      parameters: []
+      parameters: [ ]
       responses:
         401:
           description: ''
@@ -121,8 +111,8 @@ paths:
       summary: 'Создать депозит'
       operationId: ''
       description: 'Создает заявку на депозит и возращает URL coinbase оплаты'
-      parameters: []
-      responses: {  }
+      parameters: [ ]
+      responses: { }
       tags:
         - Deposits
       requestBody:
@@ -143,17 +133,17 @@ paths:
       summary: ''
       operationId: postApiCoinbaseWebhook
       description: ''
-      parameters: []
-      responses: {  }
+      parameters: [ ]
+      responses: { }
       tags:
         - Endpoints
-      security: []
+      security: [ ]
   /api/v1/orders:
     get:
       summary: 'Список заказов'
       operationId: ''
       description: 'Получить все заказы юзера'
-      parameters: []
+      parameters: [ ]
       responses:
         401:
           description: ''
@@ -189,8 +179,8 @@ paths:
       summary: 'Купить прокси'
       operationId: ''
       description: ''
-      parameters: []
-      responses: {  }
+      parameters: [ ]
+      responses: { }
       tags:
         - Orders
       requestBody:
@@ -216,8 +206,7 @@ paths:
                 - count
                 - rental_days
     parameters:
-      -
-        in: path
+      - in: path
         name: category
         description: 'Optional parameter.'
         required: true
@@ -235,7 +224,7 @@ paths:
       summary: ''
       operationId: getApiV1ProxyListUser_idTxt
       description: ''
-      parameters: []
+      parameters: [ ]
       responses:
         403:
           description: ''
@@ -255,10 +244,9 @@ paths:
                     example: Forbidden
       tags:
         - Proxy
-      security: []
+      security: [ ]
     parameters:
-      -
-        in: path
+      - in: path
         name: user_id
         description: 'The ID of the user.'
         example: nam
@@ -270,7 +258,7 @@ paths:
       summary: 'Получить купленные прокси'
       operationId: ''
       description: 'Получить все купленные прокси юзера'
-      parameters: []
+      parameters: [ ]
       responses:
         401:
           description: ''
@@ -295,8 +283,8 @@ paths:
       summary: 'Экспортировать прокси'
       operationId: ''
       description: 'Экспортировать все купленные и активные прокси юзера. Вернет URL на скачиванние'
-      parameters: []
-      responses: {  }
+      parameters: [ ]
+      responses: { }
       tags:
         - Proxy
       requestBody:
@@ -310,24 +298,24 @@ paths:
                   type: object
                   description: ''
                   example: null
-                  properties: []
+                  properties: [ ]
   /api/v1/register:
     post:
       summary: Зарегистрироваться
       operationId: ''
       description: ''
-      parameters: []
-      responses: {  }
+      parameters: [ ]
+      responses: { }
       tags:
         - User
-      security: []
+      security: [ ]
   /api/v1/login:
     post:
       summary: Залогиниться
       operationId: ''
       description: ''
-      parameters: []
-      responses: {  }
+      parameters: [ ]
+      responses: { }
       tags:
         - User
       requestBody:
@@ -343,13 +331,13 @@ paths:
                   example: nostrum
               required:
                 - authorization_token
-      security: []
+      security: [ ]
   /api/v1/user:
     get:
       summary: 'Получить юзера'
       operationId: ''
       description: ''
-      parameters: []
+      parameters: [ ]
       responses:
         401:
           description: ''
@@ -369,23 +357,17 @@ paths:
                     example: Unauthenticated.
       tags:
         - User
-      security: []
+      security: [ ]
 tags:
-  -
-    name: Category
+  - name: Category
     description: ''
-  -
-    name: Deposits
+  - name: Deposits
     description: ''
-  -
-    name: Endpoints
+  - name: Endpoints
     description: ''
-  -
-    name: Orders
+  - name: Orders
     description: ''
-  -
-    name: Proxy
+  - name: Proxy
     description: ''
-  -
-    name: User
+  - name: User
     description: ''

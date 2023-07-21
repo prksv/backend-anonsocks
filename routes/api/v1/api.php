@@ -4,11 +4,10 @@ use App\Http\Controllers\Api\v1\Category\CategoryController;
 use App\Http\Controllers\Api\v1\Deposit\DepositController;
 use App\Http\Controllers\Api\v1\Order\OrderController;
 use App\Http\Controllers\Api\v1\Proxy\ProxyController;
-use App\Http\Controllers\Api\v1\Proxy\ProxyPurchaseController;
 use App\Http\Controllers\Api\v1\User\UserController;
 use Illuminate\Support\Facades\Route;
 
-/*
+/*e
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
@@ -30,6 +29,10 @@ Route::prefix("proxy")->group(function () {
 });
 
 Route::middleware("auth:sanctum")->group(function () {
+    Route::get("thirdparty", function (\Illuminate\Http\Request $request) {
+        return $request->user();
+    });
+
     Route::prefix("orders")->group(function () {
         Route::get("/", [OrderController::class, "index"]);
     });

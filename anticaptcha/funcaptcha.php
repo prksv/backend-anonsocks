@@ -1,7 +1,7 @@
 <?php
 
-class FunCaptcha extends Anticaptcha implements AntiCaptchaTaskProtocol {
-
+class FunCaptcha extends Anticaptcha implements AntiCaptchaTaskProtocol
+{
     private $websiteUrl;
     private $jsSubdomain;
     private $websitePublicKey;
@@ -13,21 +13,22 @@ class FunCaptcha extends Anticaptcha implements AntiCaptchaTaskProtocol {
     private $proxyPassword;
     private $userAgent = "";
     private $cookies = "";
-    
-    public function getPostData() {
-        $data = array(
-            "type"                      =>  "FunCaptchaTask",
-            "websiteURL"                =>  $this->websiteUrl,
-            "funcaptchaApiJSSubdomain"  =>  $this->jsSubdomain,
-            "websitePublicKey"          =>  $this->websitePublicKey,
-            "proxyType"                 =>  $this->proxyType,
-            "proxyAddress"              =>  $this->proxyAddress,
-            "proxyPort"                 =>  $this->proxyPort,
-            "proxyLogin"                =>  $this->proxyLogin,
-            "proxyPassword"             =>  $this->proxyPassword,
-            "userAgent"                 =>  $this->userAgent,
-            "cookies"                   =>  $this->cookies
-        );
+
+    public function getPostData()
+    {
+        $data = [
+            "type" => "FunCaptchaTask",
+            "websiteURL" => $this->websiteUrl,
+            "funcaptchaApiJSSubdomain" => $this->jsSubdomain,
+            "websitePublicKey" => $this->websitePublicKey,
+            "proxyType" => $this->proxyType,
+            "proxyAddress" => $this->proxyAddress,
+            "proxyPort" => $this->proxyPort,
+            "proxyLogin" => $this->proxyLogin,
+            "proxyPassword" => $this->proxyPassword,
+            "userAgent" => $this->userAgent,
+            "cookies" => $this->cookies,
+        ];
         if ($this->jsSubdomain != null) {
             $data["funcaptchaApiJSSubdomain"] = $this->jsSubdomain;
         }
@@ -36,57 +37,67 @@ class FunCaptcha extends Anticaptcha implements AntiCaptchaTaskProtocol {
         }
         return $data;
     }
-    
-    public function getTaskSolution() {
+
+    public function getTaskSolution()
+    {
         return $this->taskInfo->solution->token;
     }
-    
-    public function setWebsiteURL($value) {
+
+    public function setWebsiteURL($value)
+    {
         $this->websiteUrl = $value;
     }
-    
-    public function setWebsitePublicKey($value) {
+
+    public function setWebsitePublicKey($value)
+    {
         $this->websitePublicKey = $value;
     }
-    
-    public function setProxyType($value) {
+
+    public function setProxyType($value)
+    {
         $this->proxyType = $value;
     }
-    
-    public function setProxyAddress($value) {
+
+    public function setProxyAddress($value)
+    {
         $this->proxyAddress = $value;
     }
-    
-    public function setProxyPort($value) {
+
+    public function setProxyPort($value)
+    {
         $this->proxyPort = $value;
     }
-    
-    public function setProxyLogin($value) {
+
+    public function setProxyLogin($value)
+    {
         $this->proxyLogin = $value;
     }
-    
-    public function setProxyPassword($value) {
+
+    public function setProxyPassword($value)
+    {
         $this->proxyPassword = $value;
     }
-    
-    public function setUserAgent($value) {
+
+    public function setUserAgent($value)
+    {
         $this->userAgent = $value;
     }
-    
-    public function setCookies($value) {
+
+    public function setCookies($value)
+    {
         $this->cookies = $value;
     }
-    
+
     /**
      * @param string $dataBlob
      */
-    public function setDataBlob($dataBlob) {
-        $this->dataBlob = array("blob" => $dataBlob);
+    public function setDataBlob($dataBlob)
+    {
+        $this->dataBlob = ["blob" => $dataBlob];
     }
-    
-    public function setJSSubdomain($value) {
+
+    public function setJSSubdomain($value)
+    {
         $this->jsSubdomain = $value;
     }
-    
-    
 }

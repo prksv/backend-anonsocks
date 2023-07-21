@@ -1,13 +1,7 @@
 <?php
 
-use App\Connectors\Webshare;
-use App\Enums\Proxy\ProxyType;
-use App\Enums\Proxy\WebshareAccountType;
-use App\Facades\ProxyManager;
-use App\Models\Proxy;
-use App\Models\User;
+use App\Models\ThirdPartyApplication;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,7 +15,10 @@ use Illuminate\Support\Facades\Storage;
 */
 
 Route::get("/", function () {
-    return \Spatie\UrlSigner\Laravel\Facades\UrlSigner::sign(url("test"), now()->addMinute());
+    $test = ThirdPartyApplication::create([
+        "name" => "TelegramAdminBot",
+    ]);
+    dd($test->createToken("access"));
 });
 
 Route::get("/test", function () {

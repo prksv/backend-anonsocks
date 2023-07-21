@@ -9,4 +9,6 @@ use Laravel\Sanctum\HasApiTokens;
 class ThirdPartyApplication extends Model
 {
     use HasFactory, HasApiTokens;
+
+    protected $guarded;
 }

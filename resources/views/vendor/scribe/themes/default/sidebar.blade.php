@@ -55,10 +55,13 @@
 
     <ul class="toc-footer" id="toc-footer">
         @if($metadata['postman_collection_url'])
-            <li style="padding-bottom: 5px;"><a href="{!! $metadata['postman_collection_url'] !!}">{!! u::trans("scribe::links.postman") !!}</a></li>
+            <li style="padding-bottom: 5px;"><a
+                    href="{!! $metadata['postman_collection_url'] !!}">{!! u::trans("scribe::links.postman") !!}</a>
+            </li>
         @endif
         @if($metadata['openapi_spec_url'])
-            <li style="padding-bottom: 5px;"><a href="{!! $metadata['openapi_spec_url'] !!}">{!! u::trans("scribe::links.openapi") !!}</a></li>
+            <li style="padding-bottom: 5px;"><a
+                    href="{!! $metadata['openapi_spec_url'] !!}">{!! u::trans("scribe::links.openapi") !!}</a></li>
         @endif
         <li><a href="http://github.com/knuckleswtf/scribe">Documentation powered by Scribe ✍</a></li>
     </ul>

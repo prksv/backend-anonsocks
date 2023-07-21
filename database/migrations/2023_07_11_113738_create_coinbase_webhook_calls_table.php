@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateCoinbaseWebhookCallsTable extends Migration
 {
@@ -12,11 +12,11 @@ class CreateCoinbaseWebhookCallsTable extends Migration
      */
     public function up()
     {
-        Schema::create('coinbase_webhook_calls', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('type')->nullable();
-            $table->text('payload')->nullable();
-            $table->text('exception')->nullable();
+        Schema::create("coinbase_webhook_calls", function (Blueprint $table) {
+            $table->increments("id");
+            $table->string("type")->nullable();
+            $table->text("payload")->nullable();
+            $table->text("exception")->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ class CreateCoinbaseWebhookCallsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('coinbase_webhook_calls');
+        Schema::dropIfExists("coinbase_webhook_calls");
     }
 }

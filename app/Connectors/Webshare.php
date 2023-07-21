@@ -3,7 +3,6 @@
 namespace App\Connectors;
 
 use App\Enums\Proxy\WebshareAccountType;
-use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Log;
@@ -15,7 +14,7 @@ class Webshare
     private string $api_key;
     private Client $client;
     /**
-     *  @var $plan array{
+     * @var $plan array{
      *       id: number,
      *       bandwidth_limit: number,
      *       monthly_price: number,
@@ -42,7 +41,7 @@ class Webshare
      *       is_high_priority_network: boolean,
      *       created_at: string,
      *       updated_at: string
-        }
+     * }
      */
     private array $plan = [];
     private WebshareAccountType $accountType;
@@ -82,21 +81,6 @@ class Webshare
             return $this->$func();
         }
         return $this->$variable;
-    }
-
-    /**
-     * @throws GuzzleException
-     */
-    public function getPlan(): array
-    {
-        if (!$this->plan) {
-            $response = $this->client->get("subscription/plan/", [
-                "query" => ["ordering" => "-created_at"],
-            ]);
-            $this->plan = json_decode($response->getBody(), true)["results"][0];
-        }
-
-        return $this->plan;
     }
 
     /**
@@ -179,6 +163,21 @@ class Webshare
     public function getPerProxyPrice()
     {
         return $this->getPlan()["monthly_price"] / $this->getPlan()["proxy_count"];
+    }
+
+    /**
+     * @throws GuzzleException
+     */
+    public function getPlan(): array
+    {
+        if (!$this->plan) {
+            $response = $this->client->get("subscription/plan/", [
+                "query" => ["ordering" => "-created_at"],
+            ]);
+            $this->plan = json_decode($response->getBody(), true)["results"][0];
+        }
+
+        return $this->plan;
     }
 
     /**

@@ -2,16 +2,23 @@
 
 namespace App\Services;
 
-use App\Enums\Deposit\DepositStatus;
-use App\Http\Resources\CategoryResource;
-use App\Http\Resources\CoinbaseChargeResource;
-use App\Models\Deposit;
 use App\Models\User;
-use Illuminate\Support\Facades\Log;
 use Shakurov\Coinbase\Facades\Coinbase;
 
 class DepositService
 {
+    public function create(User $user, int $amount)
+    {
+        $deposit = $this->createCoinbaseCharge($user, $amount);
+
+        $user->deposits()->create([
+            "internal_id" => $deposit["internal_id"],
+            "amount" => $amount,
+        ]);
+
+        return $deposit;
+    }
+
     /**
      * Создать счет Coinbase. Временное решение, нужно переписать под драйвер
      *
@@ -41,18 +48,6 @@ class DepositService
             "currency" => $charge["data"]["pricing"]["local"]["currency"],
             "internal_id" => $charge["data"]["code"],
         ];
-    }
-
-    public function create(User $user, int $amount)
-    {
-        $deposit = $this->createCoinbaseCharge($user, $amount);
-
-        $user->deposits()->create([
-            "internal_id" => $deposit["internal_id"],
-            "amount" => $amount,
-        ]);
-
-        return $deposit;
     }
 
     public function getDeposits(User $user)

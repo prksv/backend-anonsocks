@@ -19,11 +19,7 @@ class Handler extends ExceptionHandler
      *
      * @var array<int, string>
      */
-    protected $dontFlash = [
-        'current_password',
-        'password',
-        'password_confirmation',
-    ];
+    protected $dontFlash = ["current_password", "password", "password_confirmation"];
 
     /**
      * Register the exception handling callbacks for the application.
@@ -34,12 +30,11 @@ class Handler extends ExceptionHandler
             //
         });
 
-
         $this->renderable(function (Throwable $e, $request) {
             if ($request->wantsJson()) {
                 if ($e instanceof CustomException) {
                     return $this->clientErrorResponse($e->getMessage());
-                };
+                }
                 return $this->renderApiResponse($e, $request);
             }
         });

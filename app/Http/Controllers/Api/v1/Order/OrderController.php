@@ -2,19 +2,11 @@
 
 namespace App\Http\Controllers\Api\v1\Order;
 
-use App\Enums\Proxy\ProxyType;
-use App\Exceptions\CustomException;
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\ProxyPurchaseRequest;
 use App\Http\Resources\OrderResource;
-use App\Jobs\PurchaseProxy;
-use App\Models\Category;
-use App\Models\User;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Throwable;
 
 /**

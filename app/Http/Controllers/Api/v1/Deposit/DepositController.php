@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\v1\Deposit;
 
 use App\Http\Controllers\ApiController;
-use App\Http\Resources\CoinbaseChargeResource;
 use App\Http\Resources\DepositResource;
 use App\Services\DepositService;
 use Illuminate\Http\Request;

@@ -13,13 +13,13 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->name(),
-            'price' => $this->faker->randomFloat(),
-            'proxy_type_id' => $this->faker->randomNumber(),
-            'proxy_provider_id' => $this->faker->randomNumber(),
-            'available' => $this->faker->boolean(),
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),
+            "name" => $this->faker->name(),
+            "price" => $this->faker->randomFloat(),
+            "proxy_type_id" => $this->faker->randomNumber(),
+            "proxy_provider_id" => $this->faker->randomNumber(),
+            "available" => $this->faker->boolean(),
+            "created_at" => Carbon::now(),
+            "updated_at" => Carbon::now(),
         ];
     }
 }

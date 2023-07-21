@@ -3,8 +3,7 @@
 name: Proxy
 description: ''
 endpoints:
-  -
-    httpMethods:
+  - httpMethods:
       - GET
     uri: 'api/v1/proxy/list/{user_id}.txt'
     metadata:
@@ -15,7 +14,7 @@ endpoints:
       title: ''
       description: ''
       authenticated: false
-      custom: []
+      custom: [ ]
     headers:
       Content-Type: application/json
       Accept: application/json
@@ -26,17 +25,16 @@ endpoints:
         required: true
         example: nam
         type: string
-        custom: []
+        custom: [ ]
     cleanUrlParameters:
       user_id: nam
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
+    queryParameters: [ ]
+    cleanQueryParameters: [ ]
+    bodyParameters: [ ]
+    cleanBodyParameters: [ ]
+    fileParameters: [ ]
     responses:
-      -
-        status: 403
+      - status: 403
         content: '{"success":false,"message":"Forbidden"}'
         headers:
           cache-control: 'no-cache, private'
@@ -45,15 +43,14 @@ endpoints:
           x-ratelimit-remaining: '58'
           access-control-allow-origin: '*'
         description: null
-        custom: []
-    responseFields: []
-    auth: []
+        custom: [ ]
+    responseFields: [ ]
+    auth: [ ]
     controller: null
     method: null
     route: null
-    custom: []
-  -
-    httpMethods:
+    custom: [ ]
+  - httpMethods:
       - GET
     uri: api/v1/proxy
     metadata:
@@ -64,35 +61,33 @@ endpoints:
       title: 'Получить купленные прокси'
       description: 'Получить все купленные прокси юзера'
       authenticated: true
-      custom: []
+      custom: [ ]
     headers:
       Content-Type: application/json
       Accept: application/json
-    urlParameters: []
-    cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
+    urlParameters: [ ]
+    cleanUrlParameters: [ ]
+    queryParameters: [ ]
+    cleanQueryParameters: [ ]
+    bodyParameters: [ ]
+    cleanBodyParameters: [ ]
+    fileParameters: [ ]
     responses:
-      -
-        status: 401
+      - status: 401
         content: '{"success":false,"message":"Unauthenticated."}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
-        custom: []
-    responseFields: []
-    auth: []
+        custom: [ ]
+    responseFields: [ ]
+    auth: [ ]
     controller: null
     method: null
     route: null
-    custom: []
-  -
-    httpMethods:
+    custom: [ ]
+  - httpMethods:
       - POST
     uri: api/v1/proxy/export
     metadata:
@@ -103,14 +98,14 @@ endpoints:
       title: 'Экспортировать прокси'
       description: 'Экспортировать все купленные и активные прокси юзера. Вернет URL на скачиванние'
       authenticated: true
-      custom: []
+      custom: [ ]
     headers:
       Content-Type: application/json
       Accept: application/json
-    urlParameters: []
-    cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
+    urlParameters: [ ]
+    cleanUrlParameters: [ ]
+    queryParameters: [ ]
+    cleanQueryParameters: [ ]
     bodyParameters:
       proxy_ids:
         name: proxy_ids
@@ -118,13 +113,13 @@ endpoints:
         required: false
         example: null
         type: object
-        custom: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth: []
+        custom: [ ]
+    cleanBodyParameters: [ ]
+    fileParameters: [ ]
+    responses: [ ]
+    responseFields: [ ]
+    auth: [ ]
     controller: null
     method: null
     route: null
-    custom: []
+    custom: [ ]

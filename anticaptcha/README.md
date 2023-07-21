@@ -4,20 +4,25 @@
 
 Any UNIX system with php-curl.
 
-
 **How to use examples**
+
 1. Navigate to directory in terminal
+
 ```bash
 cd anticaptcha-php/examples
 ```
+
 2. Run any example
+
 ```bash
 php exampleNoCaptchaProxyless.php
 ```
+
 <br><br>
 For example:
 <br>
 Solve Recaptcha V2 with php:
+
 ```
 include("anticaptcha.php");
 include("recaptchaV2proxyless.php");
@@ -61,9 +66,11 @@ if (!$api->waitForResult(300)) {
 
 }
 ```
+
 <br>
 
 Solve Image Captcha with php:
+
 ```
 include("anticaptcha.php");
 include("imagetotext.php");
@@ -96,9 +103,11 @@ if (!$api->waitForResult()) {
     echo "captcha text: $captchaText\n\n";
 }
 ```
+
 <br>
 
 Solve Hcaptcha with php:
+
 ```
 include("anticaptcha.php");
 include("hcaptchaproxyless.php");
@@ -149,5 +158,5 @@ if (!$api->waitForResult(300)) {
 }
 ```
 
-
-More examples in our [API documentation](https://anti-captcha.com/apidoc). Select desired captcha type and scroll to code example.
+More examples in our [API documentation](https://anti-captcha.com/apidoc). Select desired captcha type and scroll to
+code example.

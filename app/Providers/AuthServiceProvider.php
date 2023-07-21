@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
+use App\Guards\TelegramGuard;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Auth;
 
@@ -24,8 +25,11 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        Auth::provider('auth_token', function ($app, array $config) {
-           return new TokenAuthorizationProvider();
-        });
+        //        Auth::extend("bot", function ($app, $name, array $config) {
+        //            return new TelegramGuard(
+        //                Auth::createUserProvider($config["provider"]),
+        //                $app->make("request")
+        //            );
+        //        });
     }
 }

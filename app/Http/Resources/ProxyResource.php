@@ -3,7 +3,6 @@
 namespace App\Http\Resources;
 
 use App\Enums\Proxy\ProxyStatus;
-use App\Enums\Proxy\ProxyType;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;

@@ -1,8 +1,7 @@
 name: User
 description: ''
 endpoints:
-  -
-    httpMethods:
+  - httpMethods:
       - POST
     uri: api/v1/register
     metadata:
@@ -13,26 +12,25 @@ endpoints:
       title: Зарегистрироваться
       description: ''
       authenticated: false
-      custom: []
+      custom: [ ]
     headers:
       Content-Type: application/json
       Accept: application/json
-    urlParameters: []
-    cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth: []
+    urlParameters: [ ]
+    cleanUrlParameters: [ ]
+    queryParameters: [ ]
+    cleanQueryParameters: [ ]
+    bodyParameters: [ ]
+    cleanBodyParameters: [ ]
+    fileParameters: [ ]
+    responses: [ ]
+    responseFields: [ ]
+    auth: [ ]
     controller: null
     method: null
     route: null
-    custom: []
-  -
-    httpMethods:
+    custom: [ ]
+  - httpMethods:
       - POST
     uri: api/v1/login
     metadata:
@@ -43,14 +41,14 @@ endpoints:
       title: Залогиниться
       description: ''
       authenticated: false
-      custom: []
+      custom: [ ]
     headers:
       Content-Type: application/json
       Accept: application/json
-    urlParameters: []
-    cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
+    urlParameters: [ ]
+    cleanUrlParameters: [ ]
+    queryParameters: [ ]
+    cleanQueryParameters: [ ]
     bodyParameters:
       authorization_token:
         name: authorization_token
@@ -58,19 +56,18 @@ endpoints:
         required: true
         example: nostrum
         type: string
-        custom: []
+        custom: [ ]
     cleanBodyParameters:
       authorization_token: nostrum
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth: []
+    fileParameters: [ ]
+    responses: [ ]
+    responseFields: [ ]
+    auth: [ ]
     controller: null
     method: null
     route: null
-    custom: []
-  -
-    httpMethods:
+    custom: [ ]
+  - httpMethods:
       - GET
     uri: api/v1/user
     metadata:
@@ -81,30 +78,29 @@ endpoints:
       title: 'Получить юзера'
       description: ''
       authenticated: false
-      custom: []
+      custom: [ ]
     headers:
       Content-Type: application/json
       Accept: application/json
-    urlParameters: []
-    cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
+    urlParameters: [ ]
+    cleanUrlParameters: [ ]
+    queryParameters: [ ]
+    cleanQueryParameters: [ ]
+    bodyParameters: [ ]
+    cleanBodyParameters: [ ]
+    fileParameters: [ ]
     responses:
-      -
-        status: 401
+      - status: 401
         content: '{"success":false,"message":"Unauthenticated."}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
-        custom: []
-    responseFields: []
-    auth: []
+        custom: [ ]
+    responseFields: [ ]
+    auth: [ ]
     controller: null
     method: null
     route: null
-    custom: []
+    custom: [ ]

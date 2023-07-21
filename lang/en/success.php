@@ -1,5 +1,5 @@
 <?php
 
 return [
-  'token_created' => 'Token created',
+    "token_created" => "Token created",
 ];

@@ -12,8 +12,8 @@ class ProxyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton('proxy_manager', function($app) {
-           return new ProxyManager($app);
+        $this->app->singleton("proxy_manager", function ($app) {
+            return new ProxyManager($app);
         });
     }
 

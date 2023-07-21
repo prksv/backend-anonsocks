@@ -1,8 +1,7 @@
 name: Endpoints
 description: ''
 endpoints:
-  -
-    httpMethods:
+  - httpMethods:
       - POST
     uri: api/coinbase/webhook
     metadata:
@@ -13,21 +12,21 @@ endpoints:
       title: ''
       description: ''
       authenticated: false
-      custom: []
+      custom: [ ]
     headers:
       Content-Type: application/json
       Accept: application/json
-    urlParameters: []
-    cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses: []
-    responseFields: []
-    auth: []
+    urlParameters: [ ]
+    cleanUrlParameters: [ ]
+    queryParameters: [ ]
+    cleanQueryParameters: [ ]
+    bodyParameters: [ ]
+    cleanBodyParameters: [ ]
+    fileParameters: [ ]
+    responses: [ ]
+    responseFields: [ ]
+    auth: [ ]
     controller: null
     method: null
     route: null
-    custom: []
+    custom: [ ]

@@ -2,7 +2,7 @@
     use Knuckles\Scribe\Tools\WritingUtils as u;
 @endphp
 
-        <!doctype html>
+    <!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -22,6 +22,7 @@
     <script>hljs.highlightAll();</script>
     <script type="module">
         import {CodeJar} from 'https://medv.io/codejar/codejar.js'
+
         window.CodeJar = CodeJar;
     </script>
 
@@ -37,6 +38,7 @@
                 color: whitesmoke;
                 background-color: transparent;
             }
+
             /*
              Problem: we want syntax highlighting for the Try It Out JSON body code editor
              However, the Try It Out area uses a dark background, while request and response samples
@@ -51,13 +53,16 @@
             .code-editor > .hljs-attr {
                 color: #8FBCBB;
             }
+
             .code-editor > .hljs-string {
                 color: #A3BE8C;
             }
+
             .code-editor > .hljs-number {
                 color: #B48EAD;
             }
-            .code-editor > .hljs-literal{
+
+            .code-editor > .hljs-literal {
                 color: #81A1C1;
             }
 
@@ -75,7 +80,7 @@
                 responsePanel.hidden = true;
 
                 let form = btnElement.form;
-                let { method, path, hasjsonbody: hasJsonBody} = form.dataset;
+                let {method, path, hasjsonbody: hasJsonBody} = form.dataset;
                 let body = {};
                 if (hasJsonBody === "1") {
                     body = form.querySelector('.code-editor').textContent;
@@ -114,7 +119,7 @@
                 return preflightPromise.then(() => makeAPICall(method, path, body, query, headers, endpointId))
                     .then(([responseStatus, statusText, responseContent, responseHeaders]) => {
                         responsePanel.hidden = false;
-                        responsePanel.querySelector(`.response-status`).textContent = responseStatus + " " + statusText ;
+                        responsePanel.querySelector(`.response-status`).textContent = responseStatus + " " + statusText;
 
                         let contentEl = responsePanel.querySelector(`.response-content`);
                         if (responseContent === '') {
@@ -130,7 +135,8 @@
                                 isJson = true;
                                 responseContent = JSON.stringify(jsonParsed, null, 4);
                             }
-                        } catch (e) {}
+                        } catch (e) {
+                        }
 
                         contentEl.innerHTML = responseContent;
                         isJson && window.hljs.highlightElement(contentEl);
@@ -141,7 +147,9 @@
                         errorPanel.hidden = false;
                         errorPanel.querySelector(`.error-message`).textContent = errorMessage;
                     })
-                    .finally(() => { btnElement.disabled = false } );
+                    .finally(() => {
+                        btnElement.disabled = false
+                    });
             }
 
             window.addEventListener('DOMContentLoaded', () => {

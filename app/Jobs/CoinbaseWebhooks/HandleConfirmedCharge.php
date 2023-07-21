@@ -6,9 +6,9 @@ use App\Enums\Deposit\DepositStatus;
 use App\Models\Deposit;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Shakurov\Coinbase\Models\CoinbaseWebhookCall;
 
 class HandleConfirmedCharge implements ShouldQueue

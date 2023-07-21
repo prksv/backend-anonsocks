@@ -2,16 +2,9 @@
 
 namespace App\Services;
 
-use App\Enums\Proxy\ProxyType;
-use App\Exceptions\CustomException;
-use App\Facades\ProxyManager;
-use App\Jobs\PurchaseProxy;
-use App\Models\Category;
 use App\Models\Proxy;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Spatie\UrlSigner\Laravel\Facades\UrlSigner;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -45,13 +38,13 @@ class ProxyService
         return UrlSigner::sign(route("download-proxy", $user->id, now()->addMinute()));
     }
 
-    public function download(User $user): StreamedResponse
-    {
-        return Storage::download($this->getExportPath($user->id));
-    }
-
     private function getExportPath(int $user_id): string
     {
         return "proxies/{$user_id}.txt";
+    }
+
+    public function download(User $user): StreamedResponse
+    {
+        return Storage::download($this->getExportPath($user->id));
     }
 }

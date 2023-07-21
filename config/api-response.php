@@ -3,7 +3,6 @@
 use Illuminate\Http\JsonResponse;
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Validation Error Defaults
@@ -15,9 +14,9 @@ return [
     |
     */
 
-    'validation' => [
-        'code' => 422,
-        'message' => 'validation_failed'
+    "validation" => [
+        "code" => 422,
+        "message" => "validation_failed",
     ],
 
     /*
@@ -32,7 +31,7 @@ return [
     |
     */
 
-    'render_html_on_exception' => false,
+    "render_html_on_exception" => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -44,9 +43,7 @@ return [
     |
     */
 
-    'http_statuses_with_no_content' => [
-        JsonResponse::HTTP_NO_CONTENT,
-    ],
+    "http_statuses_with_no_content" => [JsonResponse::HTTP_NO_CONTENT],
 
     /*
     |--------------------------------------------------------------------------
@@ -58,9 +55,9 @@ return [
     |
     */
 
-    'translation' => [
-        'success' => 'success',
-        'errors' => 'errors',
+    "translation" => [
+        "success" => "success",
+        "errors" => "errors",
     ],
 
     /*
@@ -73,11 +70,10 @@ return [
     |
     */
 
-    'data_wrappers' => [
-        '2xx' => 'data',
-        '422' => 'errors',
-        '4xx' => 'error',
-        '5xx' => 'error',
+    "data_wrappers" => [
+        "2xx" => "data",
+        "422" => "errors",
+        "4xx" => "error",
+        "5xx" => "error",
     ],
-
 ];

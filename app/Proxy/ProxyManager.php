@@ -15,6 +15,6 @@ class ProxyManager extends Manager
 
     public function getDefaultDriver(): string
     {
-        return 'webshare';
+        return "webshare";
     }
 }

@@ -6,7 +6,6 @@ use App\Http\Controllers\ApiController;
 use App\Http\Resources\UserResource;
 use App\Services\UserService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 /**
  * @group User

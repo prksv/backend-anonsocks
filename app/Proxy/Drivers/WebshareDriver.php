@@ -11,7 +11,6 @@ use App\Exceptions\CustomException;
 use App\Models\Proxy;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use RecaptchaV2Proxyless;
 use Stripe\Exception\ApiErrorException;
@@ -48,70 +47,6 @@ class WebshareDriver extends Driver
         $this->api = new Webshare($accountType);
 
         return $this;
-    }
-
-    /**
-     * @throws GuzzleException
-     */
-    protected function getAllProxies(): array
-    {
-        $result = [];
-
-        $res = $this->api->getProxiesList(null, 100, 1);
-        for ($page = 1; $page <= ceil($res["count"] / 100); $page++) {
-            if ($page != 1) {
-                $res = $this->api->getProxiesList(null, 100, $page);
-            }
-            foreach ($res["results"] as $proxy) {
-                $result[] = $this->formatProxy($proxy);
-            }
-        }
-        return $result;
-    }
-
-    public function formatProxy($proxy): array
-    {
-        return [
-            "external_id" => $proxy["id"],
-            "username" => $proxy["username"],
-            "password" => $proxy["password"],
-            "ip" => $proxy["proxy_address"],
-            "port" => $proxy["port"],
-            "country" => $proxy["country_code"],
-        ];
-    }
-
-    /**
-     * Делает замену прокси на указаннные страны
-     *
-     * @param array $ip_addresses
-     * @param int[] $replace_countries
-     * @return Collection Список заменённых прокси
-     * @throws GuzzleException
-     */
-    public function makeReplace(array $ip_addresses = [], array $replace_countries = []): Collection
-    {
-        $requestId = $this->api->requestReplacement($ip_addresses, $replace_countries);
-        while (empty(($response = $this->api->getReplacedProxy($requestId)))) {
-            sleep(3);
-        }
-        $proxies = collect();
-        foreach ($response as $replaced) {
-            $proxy = Proxy::firstWhere("ip", $replaced["proxy"]);
-            $replacedProxy = $proxy->replicate();
-
-            $replacedProxy->ip = $replaced["replaced_with"];
-            $replacedProxy->port = $replaced["replaced_with_port"];
-            $replacedProxy->country = $replaced["replaced_with_country_code"];
-
-            $proxy->update(["status" => ProxyStatus::REPLACED]);
-
-            $replacedProxy->save();
-
-            $proxies = $proxies->merge([$replacedProxy]);
-        }
-        Log::debug(json_encode($proxies->pluck("id")->all()));
-        return $proxies;
     }
 
     /**
@@ -170,6 +105,44 @@ class WebshareDriver extends Driver
     }
 
     /**
+     * @throws GuzzleException
+     * @throws \Throwable
+     */
+    private function buy(array $countries): Collection
+    {
+        $minimum_count = floor(1 / $this->api->getPerProxyPrice());
+        $required_count = array_sum($countries);
+
+        if ($required_count < $minimum_count) {
+            $countries["ZZ"] = $minimum_count - $required_count;
+        }
+
+        $payment = $this->api->buyProxies(
+            $countries,
+            $this->api->getSubscription()["payment_method"],
+            $this->solveCaptcha()
+        );
+
+        if ($payment["payment_required"]) {
+            $this->confirmPayment(
+                $payment["stripe_payment_intent"],
+                $payment["stripe_payment_method"],
+                $payment["stripe_client_secret"]
+            );
+            $pending_payment = $this->api->pendingPayment($payment["pending_payment"]);
+            $this->api->processPayment($payment["pending_payment"], $pending_payment);
+        }
+
+        $exists_results = Proxy::whereIn("country", array_keys($countries))->get();
+
+        $this->sync();
+
+        $results_after_sync = Proxy::whereIn("country", array_keys($countries))->get();
+
+        return $results_after_sync->diff($exists_results);
+    }
+
+    /**
      * @throws \Throwable
      */
     private function solveCaptcha()
@@ -208,40 +181,66 @@ class WebshareDriver extends Driver
     }
 
     /**
+     * Делает замену прокси на указаннные страны
+     *
+     * @param array $ip_addresses
+     * @param int[] $replace_countries
+     * @return Collection Список заменённых прокси
      * @throws GuzzleException
-     * @throws \Throwable
      */
-    private function buy(array $countries): Collection
+    public function makeReplace(array $ip_addresses = [], array $replace_countries = []): Collection
     {
-        $minimum_count = floor(1 / $this->api->getPerProxyPrice());
-        $required_count = array_sum($countries);
-
-        if ($required_count < $minimum_count) {
-            $countries["ZZ"] = $minimum_count - $required_count;
+        $requestId = $this->api->requestReplacement($ip_addresses, $replace_countries);
+        while (empty(($response = $this->api->getReplacedProxy($requestId)))) {
+            sleep(3);
         }
+        $proxies = collect();
+        foreach ($response as $replaced) {
+            $proxy = Proxy::firstWhere("ip", $replaced["proxy"]);
+            $replacedProxy = $proxy->replicate();
 
-        $payment = $this->api->buyProxies(
-            $countries,
-            $this->api->getSubscription()["payment_method"],
-            $this->solveCaptcha()
-        );
+            $replacedProxy->ip = $replaced["replaced_with"];
+            $replacedProxy->port = $replaced["replaced_with_port"];
+            $replacedProxy->country = $replaced["replaced_with_country_code"];
 
-        if ($payment["payment_required"]) {
-            $this->confirmPayment(
-                $payment["stripe_payment_intent"],
-                $payment["stripe_payment_method"],
-                $payment["stripe_client_secret"]
-            );
-            $pending_payment = $this->api->pendingPayment($payment["pending_payment"]);
-            $this->api->processPayment($payment["pending_payment"], $pending_payment);
+            $proxy->update(["status" => ProxyStatus::REPLACED]);
+
+            $replacedProxy->save();
+
+            $proxies = $proxies->merge([$replacedProxy]);
         }
+        Log::debug(json_encode($proxies->pluck("id")->all()));
+        return $proxies;
+    }
 
-        $exists_results = Proxy::whereIn("country", array_keys($countries))->get();
+    /**
+     * @throws GuzzleException
+     */
+    protected function getAllProxies(): array
+    {
+        $result = [];
 
-        $this->sync();
+        $res = $this->api->getProxiesList(null, 100, 1);
+        for ($page = 1; $page <= ceil($res["count"] / 100); $page++) {
+            if ($page != 1) {
+                $res = $this->api->getProxiesList(null, 100, $page);
+            }
+            foreach ($res["results"] as $proxy) {
+                $result[] = $this->formatProxy($proxy);
+            }
+        }
+        return $result;
+    }
 
-        $results_after_sync = Proxy::whereIn("country", array_keys($countries))->get();
-
-        return $results_after_sync->diff($exists_results);
+    public function formatProxy($proxy): array
+    {
+        return [
+            "external_id" => $proxy["id"],
+            "username" => $proxy["username"],
+            "password" => $proxy["password"],
+            "ip" => $proxy["proxy_address"],
+            "port" => $proxy["port"],
+            "country" => $proxy["country_code"],
+        ];
     }
 }

@@ -3,9 +3,8 @@
 namespace App\Models;
 
 use App\Exceptions\NotEnoughMoney;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -64,5 +63,15 @@ class User extends Authenticatable
     public function deposits(): HasMany
     {
         return $this->hasMany(Deposit::class);
+    }
+
+    public function scopeFindByTelegramId(Builder $query, int $telegram_id)
+    {
+        //        return $query
+        //            ->whereHas("telegram_accounts", function (Builder $query) use ($telegram_id) {
+        //                $query->where("telegram_id", $telegram_id);
+        //            })
+        //            ->first();
+        return $query->find($telegram_id);
     }
 }

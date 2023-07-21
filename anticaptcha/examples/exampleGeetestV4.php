@@ -1,8 +1,7 @@
 <?php
 
-
-include("../anticaptcha.php");
-include("../geetestproxyless.php");
+include "../anticaptcha.php";
+include "../geetestproxyless.php";
 
 $api = new GeeTestProxyless();
 $api->setVerboseMode(true);
@@ -17,21 +16,19 @@ $api->setGTKey("fcd636b4514bf7ac4143922550b3008b");
 $api->setVersion(4);
 $api->setAPISubdomain("gcaptcha4.geetest.com");
 $api->setInitParameters([
-    "riskType" => "ai"
+    "riskType" => "ai",
 ]);
-
 
 //Specify softId to earn 10% commission with your app.
 //Get your softId here: https://anti-captcha.com/clients/tools/devcenter
 $api->setSoftId(0);
 
 if (!$api->createTask()) {
-    $api->debout("API v2 send failed - ".$api->getErrorMessage(), "red");
-    exit;
+    $api->debout("API v2 send failed - " . $api->getErrorMessage(), "red");
+    exit();
 }
 
 $taskId = $api->getTaskId();
-
 
 if (!$api->waitForResult()) {
     $api->debout("could not solve captcha", "red");

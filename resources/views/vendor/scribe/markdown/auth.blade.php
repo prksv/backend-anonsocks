@@ -4,9 +4,9 @@
 # {{ u::trans("scribe::headings.auth") }}
 
 @if(!$isAuthed)
-{!! u::trans("scribe::auth.none") !!}
+    {!! u::trans("scribe::auth.none") !!}
 @else
-{!! $authDescription !!}
+    {!! $authDescription !!}
 
-{!! $extraAuthInfo !!}
+    {!! $extraAuthInfo !!}
 @endif

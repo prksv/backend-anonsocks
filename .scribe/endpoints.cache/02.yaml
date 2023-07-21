@@ -3,8 +3,7 @@
 name: Category
 description: ''
 endpoints:
-  -
-    httpMethods:
+  - httpMethods:
       - GET
     uri: api/v1/proxy/categories
     metadata:
@@ -15,20 +14,19 @@ endpoints:
       title: 'Список категорий'
       description: 'Получить категории проксей'
       authenticated: false
-      custom: []
+      custom: [ ]
     headers:
       Content-Type: application/json
       Accept: application/json
-    urlParameters: []
-    cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
+    urlParameters: [ ]
+    cleanUrlParameters: [ ]
+    queryParameters: [ ]
+    cleanQueryParameters: [ ]
+    bodyParameters: [ ]
+    cleanBodyParameters: [ ]
+    fileParameters: [ ]
     responses:
-      -
-        status: 200
+      - status: 200
         content: '{"success":true,"message":"Categories list","data":[{"name":"ipv6_64","available":1,"rental_terms":[{"days":1,"price":1}]},{"name":"ipv4_free","available":1,"rental_terms":[]},{"name":"ipv4_premium","available":1,"rental_terms":[]}]}'
         headers:
           cache-control: 'no-cache, private'
@@ -37,10 +35,10 @@ endpoints:
           x-ratelimit-remaining: '59'
           access-control-allow-origin: '*'
         description: null
-        custom: []
-    responseFields: []
-    auth: []
+        custom: [ ]
+    responseFields: [ ]
+    auth: [ ]
     controller: null
     method: null
     route: null
-    custom: []
+    custom: [ ]

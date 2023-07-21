@@ -8,12 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class RentalTerm extends Model
 {
     use HasFactory;
-    protected $guarded;
-
-    protected $casts = [
-        "available" => "bool",
-    ];
 
     const UPDATED_AT = null;
     const CREATED_AT = null;
+    protected $guarded;
+    protected $casts = [
+        "available" => "bool",
+    ];
 }

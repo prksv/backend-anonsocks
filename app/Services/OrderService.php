@@ -2,14 +2,12 @@
 
 namespace App\Services;
 
-use App\Enums\Order\OrderStatus;
 use App\Enums\Proxy\ProxyType;
 use App\Exceptions\CustomException;
 use App\Jobs\PurchaseProxy;
 use App\Models\Category;
 use App\Models\Order;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
 use Throwable;
 
 class OrderService

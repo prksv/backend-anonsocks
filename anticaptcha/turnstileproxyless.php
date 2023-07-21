@@ -1,44 +1,50 @@
 <?php
 
-class TurnstileProxyless extends Anticaptcha implements AntiCaptchaTaskProtocol {
-
+class TurnstileProxyless extends Anticaptcha implements AntiCaptchaTaskProtocol
+{
     private $websiteUrl;
     private $websiteKey;
     private $action;
     private $userAgent = "";
-    
-    public function getPostData() {
-        return array(
-            "type"              =>  "TurnstileTaskProxyless",
-            "websiteURL"        =>  $this->websiteUrl,
-            "websiteKey"        =>  $this->websiteKey,
-            "userAgent"         =>  $this->userAgent,
-            "action"            =>  $this->action
-        );
+
+    public function getPostData()
+    {
+        return [
+            "type" => "TurnstileTaskProxyless",
+            "websiteURL" => $this->websiteUrl,
+            "websiteKey" => $this->websiteKey,
+            "userAgent" => $this->userAgent,
+            "action" => $this->action,
+        ];
     }
-    
-    public function setTaskInfo($taskInfo) {
+
+    public function setTaskInfo($taskInfo)
+    {
         $this->taskInfo = $taskInfo;
     }
-    
-    public function getTaskSolution() {
+
+    public function getTaskSolution()
+    {
         return $this->taskInfo->solution->token;
     }
-    
-    public function setWebsiteURL($value) {
+
+    public function setWebsiteURL($value)
+    {
         $this->websiteUrl = $value;
     }
-    
-    public function setWebsiteKey($value) {
+
+    public function setWebsiteKey($value)
+    {
         $this->websiteKey = $value;
     }
-    
-    public function setUserAgent($value) {
+
+    public function setUserAgent($value)
+    {
         $this->userAgent = $value;
     }
-    
-    public function setAction($value) {
+
+    public function setAction($value)
+    {
         $this->action = $value;
     }
-    
 }

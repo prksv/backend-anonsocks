@@ -1,7 +1,7 @@
 @php
     use Knuckles\Scribe\Tools\WritingUtils as u;
 @endphp
-<!doctype html>
+    <!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -22,23 +22,25 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jets/0.14.1/jets.min.js"></script>
 
-@if(isset($metadata['example_languages']))
-    <style id="language-style">
-        /* starts out as display none and is replaced with js later  */
-        @foreach($metadata['example_languages'] as $lang)
-            body .content .{{ $lang }}-example code { display: none; }
-        @endforeach
-    </style>
-@endif
+    @if(isset($metadata['example_languages']))
+        <style id="language-style">
+            /* starts out as display none and is replaced with js later  */
+            @foreach($metadata['example_languages'] as $lang)
+            body .content .{{ $lang }}-example code {
+                display: none;
+            }
+            @endforeach
+        </style>
+    @endif
 
-@if($tryItOut['enabled'] ?? true)
-    <script>
-        var tryItOutBaseUrl = "{{ $tryItOut['base_url'] ?? config('app.url') }}";
-        var useCsrf = Boolean({{ $tryItOut['use_csrf'] ?? null }});
-        var csrfUrl = "{{ $tryItOut['csrf_url'] ?? null }}";
-    </script>
-    <script src="{{ u::getVersionedAsset($assetPathPrefix.'js/tryitout.js') }}"></script>
-@endif
+    @if($tryItOut['enabled'] ?? true)
+        <script>
+            var tryItOutBaseUrl = "{{ $tryItOut['base_url'] ?? config('app.url') }}";
+            var useCsrf = Boolean({{ $tryItOut['use_csrf'] ?? null }});
+            var csrfUrl = "{{ $tryItOut['csrf_url'] ?? null }}";
+        </script>
+        <script src="{{ u::getVersionedAsset($assetPathPrefix.'js/tryitout.js') }}"></script>
+    @endif
 
     <script src="{{ u::getVersionedAsset($assetPathPrefix.'js/theme-default.js') }}"></script>
 

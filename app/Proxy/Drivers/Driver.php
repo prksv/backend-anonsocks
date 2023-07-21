@@ -24,11 +24,11 @@ abstract class Driver implements ProxyDriverInterface
         $proxies = $this->getAllProxies();
         foreach ($proxies as $proxy) {
             Proxy::updateOrCreate(
-                ['external_id' => $proxy['external_id']],
+                ["external_id" => $proxy["external_id"]],
                 $proxy + [
-                    'status' => ProxyStatus::ACTIVE,
-                    'provider' => self::$provider_id,
-                    'type' => $this->proxyType,
+                    "status" => ProxyStatus::ACTIVE,
+                    "provider" => self::$provider_id,
+                    "type" => $this->proxyType,
                 ]
             );
         }

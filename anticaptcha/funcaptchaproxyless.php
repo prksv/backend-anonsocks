@@ -1,19 +1,20 @@
 <?php
 
-class FunCaptchaProxyless extends Anticaptcha implements AntiCaptchaTaskProtocol {
-
+class FunCaptchaProxyless extends Anticaptcha implements AntiCaptchaTaskProtocol
+{
     private $websiteUrl;
     private $jsSubdomain;
     private $websitePublicKey;
     private $dataBlob;
-    
-    public function getPostData() {
-        $data = array(
-            "type"                      =>  "FunCaptchaTaskProxyless",
-            "websiteURL"                =>  $this->websiteUrl,
-            "funcaptchaApiJSSubdomain"  =>  $this->jsSubdomain,
-            "websitePublicKey"          =>  $this->websitePublicKey
-        );
+
+    public function getPostData()
+    {
+        $data = [
+            "type" => "FunCaptchaTaskProxyless",
+            "websiteURL" => $this->websiteUrl,
+            "funcaptchaApiJSSubdomain" => $this->jsSubdomain,
+            "websitePublicKey" => $this->websitePublicKey,
+        ];
         if ($this->jsSubdomain != null) {
             $data["funcaptchaApiJSSubdomain"] = $this->jsSubdomain;
         }
@@ -22,33 +23,37 @@ class FunCaptchaProxyless extends Anticaptcha implements AntiCaptchaTaskProtocol
         }
         return $data;
     }
-    
-    public function setTaskInfo($taskInfo) {
+
+    public function setTaskInfo($taskInfo)
+    {
         $this->taskInfo = $taskInfo;
     }
-    
-    public function getTaskSolution() {
+
+    public function getTaskSolution()
+    {
         return $this->taskInfo->solution->token;
     }
-    
-    public function setWebsiteURL($value) {
+
+    public function setWebsiteURL($value)
+    {
         $this->websiteUrl = $value;
     }
-    
-    public function setJSSubdomain($value) {
+
+    public function setJSSubdomain($value)
+    {
         $this->jsSubdomain = $value;
     }
-    
-    public function setWebsitePublicKey($value) {
+
+    public function setWebsitePublicKey($value)
+    {
         $this->websitePublicKey = $value;
     }
-    
+
     /**
      * @param string $dataBlob
      */
-    public function setDataBlob($dataBlob) {
+    public function setDataBlob($dataBlob)
+    {
         $this->dataBlob = $dataBlob;
     }
-    
-    
 }
