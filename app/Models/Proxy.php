@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Log;
 
 class Proxy extends Model
 {
@@ -73,13 +74,16 @@ class Proxy extends Model
 
     public function isExpired(): bool
     {
+        if (is_null($this->expires_at)) {
+            return false;
+        }
         return $this->expires_at < Carbon::now();
     }
 
     protected function expiresAt(): Attribute
     {
         return Attribute::make(function () {
-            return OrderProxy::latest("proxy_id", $this->id)->first()->expires_at;
+            return OrderProxy::latest("proxy_id", $this->id)->first()?->expires_at;
         });
     }
 }

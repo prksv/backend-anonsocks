@@ -18,14 +18,16 @@ class ProxyResource extends JsonResource
     {
         return [
             "id" => $this->id,
+            $this->mergeWhen($this->expires_at, [
+                "days_remains" => Carbon::now()->diff($this->expires_at)->days,
+                "expires_at" => $this->expires_at,
+            ]),
             "status" => ($this->isExpired() ? ProxyStatus::EXPIRED : $this->status)->name,
-            "days_remains" => Carbon::now()->diff($this->expires_at)->days,
             "ip" => $this->ip,
             "port" => $this->port,
             "username" => $this->username,
             "password" => $this->password,
             "country" => $this->country,
-            "expires_at" => $this->expires_at,
         ];
     }
 }
