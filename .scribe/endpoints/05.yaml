@@ -1,7 +1,8 @@
 name: Deposits
 description: ''
 endpoints:
-  - httpMethods:
+  -
+    httpMethods:
       - GET
     uri: api/v1/deposit
     metadata:
@@ -12,33 +13,82 @@ endpoints:
       title: 'Список депозитов'
       description: 'Получить все депозиты юзера'
       authenticated: true
-      custom: [ ]
+      custom: []
     headers:
       Content-Type: application/json
       Accept: application/json
-    urlParameters: [ ]
-    cleanUrlParameters: [ ]
-    queryParameters: [ ]
-    cleanQueryParameters: [ ]
-    bodyParameters: [ ]
-    cleanBodyParameters: [ ]
-    fileParameters: [ ]
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
     responses:
-      - status: 401
+      -
+        status: 401
         content: '{"success":false,"message":"Unauthenticated."}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
-        custom: [ ]
-    responseFields: [ ]
-    auth: [ ]
+        custom: []
+    responseFields: []
+    auth: []
     controller: null
     method: null
     route: null
-    custom: [ ]
-  - httpMethods:
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: 'api/v1/deposit/{internal_id}'
+    metadata:
+      groupName: Deposits
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Посмотреть депозит'
+      description: 'Посмотреть объект депозита'
+      authenticated: true
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      internal_id:
+        name: internal_id
+        description: 'The ID of the internal.'
+        required: true
+        example: 1
+        type: integer
+        custom: []
+    cleanUrlParameters:
+      internal_id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 401
+        content: '{"success":false,"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
       - POST
     uri: api/v1/deposit/create
     metadata:
@@ -49,29 +99,29 @@ endpoints:
       title: 'Создать депозит'
       description: 'Создает заявку на депозит и возращает URL coinbase оплаты'
       authenticated: true
-      custom: [ ]
+      custom: []
     headers:
       Content-Type: application/json
       Accept: application/json
-    urlParameters: [ ]
-    cleanUrlParameters: [ ]
-    queryParameters: [ ]
-    cleanQueryParameters: [ ]
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
     bodyParameters:
       amount:
         name: amount
         description: 'Must be at least 1.'
         required: true
-        example: 67
+        example: 11
         type: integer
-        custom: [ ]
+        custom: []
     cleanBodyParameters:
-      amount: 67
-    fileParameters: [ ]
-    responses: [ ]
-    responseFields: [ ]
-    auth: [ ]
+      amount: 11
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
     controller: null
     method: null
     route: null
-    custom: [ ]
+    custom: []

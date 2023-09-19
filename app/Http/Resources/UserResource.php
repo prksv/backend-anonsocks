@@ -17,9 +17,12 @@ class UserResource extends JsonResource
         return [
             "id" => $this->id,
             "balance" => $this->balance,
+            "created_at" => $this->created_at,
+            "updated_at" => $this->updated_at,
             $this->mergeWhen($this->access_token, [
                 "access_token" => $this->access_token,
             ]),
+            "roles" => $this->getRoles()
         ];
     }
 }

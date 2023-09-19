@@ -6,6 +6,7 @@ use App\Enums\Order\OrderStatus;
 use App\Enums\Proxy\ProxyType;
 use App\Facades\ProxyManager;
 use App\Models\Order;
+use App\Models\ProxyRentalPeriod;
 use App\Services\OrderService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -30,11 +31,12 @@ class PurchaseProxy implements ShouldQueue
      * Create a new job instance.
      */
     public function __construct(
-        Order $order,
+        Order     $order,
         ProxyType $proxyType,
-        string $country_code,
-        int $count
-    ) {
+        string    $country_code,
+        int       $count
+    )
+    {
         Log::debug($count);
         $this->order = $order;
         $this->orderService = new OrderService();
@@ -51,19 +53,34 @@ class PurchaseProxy implements ShouldQueue
     {
         DB::beginTransaction();
 
-        $proxies = ProxyManager::proxyType($this->proxyType)->getProxies(
-            $this->country_code,
-            $this->count
-        );
+        try {
+            $proxies = ProxyManager::proxyType($this->proxyType)->getProxies(
+                $this->country_code,
+                $this->count
+            );
 
-        $this->order->update([
-            "status" => OrderStatus::DONE,
-        ]);
+            $this->order->update([
+                "status" => OrderStatus::DONE,
+            ]);
 
-        $this->order->proxies()->attach($proxies->pluck("id")->all(), [
-            "expires_at" => Carbon::now()->addDays($this->order->rentalTerm->days),
-        ]);
+            $this->order->proxies()->attach($proxies->pluck("id")->all());
 
-        DB::commit();
+            $rentalTerm = $this->order->rentalTerm;
+
+            foreach ($this->order->proxies as $proxy) {
+                ProxyRentalPeriod::create([
+                    'order_proxy_id' => $proxy->pivot->id,
+                    'rental_term_id' => $rentalTerm->id,
+                    'amount' => $rentalTerm->price,
+                    'expires_at' => Carbon::now()->addDays($rentalTerm->days)
+                ]);
+            };
+
+            DB::commit();
+        } catch (\Exception $e) {
+            Log::debug($e);
+            DB::rollback();
+            $this->fail($e);
+        }
     }
 }

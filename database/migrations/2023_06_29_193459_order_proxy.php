@@ -24,7 +24,7 @@ return new class extends Migration {
                 ->references("id")
                 ->on("proxies")
                 ->onDelete("cascade");
-            $table->timestamp("expires_at");
+            $table->timestamps();
         });
     }
 

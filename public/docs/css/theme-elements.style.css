@@ -13626,7 +13626,7 @@ svg:not(:host).svg-inline--fa {
 }
 
 :root .sl-inverted, [data-theme=light] .sl-inverted, [data-theme=light] .sl-inverted .sl-inverted .sl-inverted {
-    --color-canvas: #f2f2f2;
+   --color-canvas: #f2f2f2;
 }
 
 aside {
@@ -13669,7 +13669,6 @@ input[type="file"]::file-selector-button:hover {
     /* Foreground, Background */
     scrollbar-color: #3c4c67 transparent);
 }
-
 *::-webkit-scrollbar { /* Background */
     width: 5px;
     height: 5px;

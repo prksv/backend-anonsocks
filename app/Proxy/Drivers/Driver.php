@@ -22,6 +22,7 @@ abstract class Driver implements ProxyDriverInterface
     public function sync(): void
     {
         $proxies = $this->getAllProxies();
+
         foreach ($proxies as $proxy) {
             Proxy::updateOrCreate(
                 ["external_id" => $proxy["external_id"]],

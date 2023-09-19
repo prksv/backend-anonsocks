@@ -209,7 +209,6 @@ class WebshareDriver extends Driver
 
             $proxies = $proxies->merge([$replacedProxy]);
         }
-        Log::debug(json_encode($proxies->pluck("id")->all()));
         return $proxies;
     }
 
@@ -242,5 +241,24 @@ class WebshareDriver extends Driver
             "port" => $proxy["port"],
             "country" => $proxy["country_code"],
         ];
+    }
+
+    /**
+     * @throws GuzzleException
+     */
+    public function getCountries(bool $full_names = false): array
+    {
+        $countries = $this->api->getCountries();
+
+        $countries_information = [];
+
+        foreach ($countries as $key => $count) {
+            $countries_information[$key] = [
+                'count' => $count,
+                'full_name' => config('proxy.country_codes.' . $key)
+            ];
+        }
+
+        return $countries_information;
     }
 }

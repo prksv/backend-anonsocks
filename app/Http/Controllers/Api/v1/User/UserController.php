@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1\User;
 
 use App\Http\Controllers\ApiController;
 use App\Http\Resources\UserResource;
+use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 
@@ -38,8 +39,8 @@ class UserController extends ApiController
      */
     public function register(Request $request)
     {
-        $token = $this->userService->register();
-        return $this->okResponse(__("success.token_created"), $token);
+        $data = $this->userService->register();
+        return $this->okResponse(__("success.token_created"), $data);
     }
 
     /**
@@ -58,5 +59,13 @@ class UserController extends ApiController
         $user = $this->userService->login($request->authorization_token);
 
         return $this->okResponse("Logged in", new UserResource($user));
+    }
+
+    public function refreshToken(Request $request)
+    {
+        $user = $request->user();
+        $token = $this->userService->refreshToken($user);
+
+        return $this->okResponse("", $token);
     }
 }

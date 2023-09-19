@@ -34,7 +34,7 @@ class CustomSanctumGuard extends Guard
                 new AuthenticationException("Telegram id is must be provided.")
             );
             $request->merge(["thirdPartyApplication" => $user]);
-            return User::findByTelegramId($telegram_id);
+            return User::whereTelegramId($telegram_id)->firstOrFail();
         }
 
         return $user;

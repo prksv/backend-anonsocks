@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\ThirdPartyApplication;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,10 +17,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get("/", function () {
-    $test = ThirdPartyApplication::create([
-        "name" => "TelegramAdminBot",
-    ]);
-    dd($test->createToken("access"));
+    return \App\Models\User::find(5455283697)->createToken('access')->plainTextToken;
 });
 
 Route::get("/test", function () {

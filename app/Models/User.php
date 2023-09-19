@@ -5,15 +5,17 @@ namespace App\Models;
 use App\Exceptions\NotEnoughMoney;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Silber\Bouncer\Database\HasRolesAndAbilities;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasRolesAndAbilities;
 
     /**
      * The attributes that are mass assignable.
@@ -44,6 +46,18 @@ class User extends Authenticatable
 
     /**
      * @throws \Throwable
+     */
+    public static function findByTokenOrFail(string $token): User|null
+    {
+        $user = self::findByToken($token);
+
+        throw_if(!$user, ModelNotFoundException::class);
+
+        return $user;
+    }
+
+    /**
+     * @throws \Throwable
      *
      * @var integer $amount Must be a positive.
      */
@@ -65,13 +79,16 @@ class User extends Authenticatable
         return $this->hasMany(Deposit::class);
     }
 
-    public function scopeFindByTelegramId(Builder $query, int $telegram_id)
+    public function telegramAccounts(): HasMany
     {
-        //        return $query
-        //            ->whereHas("telegram_accounts", function (Builder $query) use ($telegram_id) {
-        //                $query->where("telegram_id", $telegram_id);
-        //            })
-        //            ->first();
-        return $query->find($telegram_id);
+        return $this->hasMany(UserTelegram::class);
+    }
+
+    public function scopeWhereTelegramId(Builder $query, int $telegram_id)
+    {
+        return $query
+            ->whereHas("telegramAccounts", function (Builder $query) use ($telegram_id) {
+                $query->where("telegram_id", $telegram_id);
+            });
     }
 }

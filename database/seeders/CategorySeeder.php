@@ -16,20 +16,26 @@ class CategorySeeder extends Seeder
     {
         Category::create([
             "name" => "ipv6_64",
-            "proxy_type_id" => ProxyType::IPV4_SHARED,
-            "proxy_provider_id" => ProxyProvider::WEBSHARE,
+            "proxy_type" => ProxyType::IPV4_SHARED,
+            "proxy_provider" => ProxyProvider::WEBSHARE,
+            "description" => 'Lorem ipsum dolor sit amet, consectetur adip',
+            'note' => "I'm being held hostage",
         ]);
 
         Category::create([
             "name" => "ipv4_free",
-            "proxy_type_id" => ProxyType::IPV4_SHARED_FREE,
-            "proxy_provider_id" => ProxyProvider::WEBSHARE,
+            "proxy_type" => ProxyType::IPV4_SHARED_FREE,
+            "proxy_provider" => ProxyProvider::WEBSHARE,
+            "description" => 'Lorem ipsum dolor sit amet, consectetur adip',
+            'note' => "I'm being held hostage",
         ]);
 
         Category::create([
             "name" => "ipv4_premium",
-            "proxy_type_id" => ProxyType::IPV4_PREMIUM,
-            "proxy_provider_id" => ProxyProvider::WEBSHARE,
+            "proxy_type" => ProxyType::IPV4_PREMIUM,
+            "proxy_provider" => ProxyProvider::WEBSHARE,
+            "description" => 'Lorem ipsum dolor sit amet, consectetur adip',
+            'note' => "I'm being held hostage",
         ]);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1\Deposit;
 
 use App\Http\Controllers\ApiController;
 use App\Http\Resources\DepositResource;
+use App\Models\Deposit;
 use App\Services\DepositService;
 use Illuminate\Http\Request;
 
@@ -31,6 +32,23 @@ class DepositController extends ApiController
         $deposits = $this->depositService->getDeposits($request->user());
 
         return $this->okResponse("Deposits list", DepositResource::collection($deposits));
+    }
+
+    /**
+     * Посмотреть депозит
+     *
+     * Посмотреть объект депозита
+     *
+     * @authenticated
+     */
+
+    public function view(Request $request)
+    {
+        $deposit = Deposit::where('internal_id', $request->internal_id)->firstOrFail();
+
+        $this->authorize('view', $deposit);
+
+        return $this->okResponse("Deposits view", new DepositResource($deposit));
     }
 
     /**

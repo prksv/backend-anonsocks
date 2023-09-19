@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1\Category;
 
 use App\Http\Controllers\ApiController;
 use App\Http\Resources\CategoryResource;
+use App\Models\Category;
 use App\Services\CategoryService;
 use Illuminate\Http\Request;
 
@@ -31,5 +32,19 @@ class CategoryController extends ApiController
     {
         $categories = $this->categoryService->getCategories();
         return $this->okResponse("Categories list", CategoryResource::collection($categories));
+    }
+    /**
+     * Список стран категории
+     *
+     * Получить все страны у категории
+     *
+     */
+    public function countries(Request $request)
+    {
+        $category = Category::where('name', $request->category_name)->firstOrFail();
+
+        $countries = $this->categoryService->getCountries($category);
+
+        return $this->okResponse("Countries list", $countries);
     }
 }

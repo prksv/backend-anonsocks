@@ -16,13 +16,17 @@ class ProxyResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        //$rental_days = $this->orders->first()?->rentalTerm->days;
+
         return [
             "id" => $this->id,
-            $this->mergeWhen($this->expires_at, [
+            $this->mergeWhen($this->isTaken(), [
                 "days_remains" => Carbon::now()->diff($this->expires_at)->days,
                 "expires_at" => $this->expires_at,
+                "rental_days" => $this->rental_days,
             ]),
-            "status" => ($this->isExpired() ? ProxyStatus::EXPIRED : $this->status)->name,
+            "is_taken" => $this->isTaken(),
+            "status" => $this->status->name,
             "ip" => $this->ip,
             "port" => $this->port,
             "username" => $this->username,

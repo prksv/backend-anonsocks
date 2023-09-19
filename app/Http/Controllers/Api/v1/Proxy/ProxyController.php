@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\Api\v1\Proxy;
 
+use App\Exceptions\CustomException;
 use App\Http\Controllers\ApiController;
 use App\Http\Resources\ProxyResource;
+use App\Models\Order;
+use App\Models\Proxy;
 use App\Models\User;
 use App\Services\ProxyService;
 use Illuminate\Http\Request;
@@ -60,5 +63,27 @@ class ProxyController extends ApiController
         $user = User::findOrFail($request->user_id);
 
         return $this->proxyService->download($user);
+    }
+
+    /**
+     * Продлить аренду
+     *
+     * Продлить срок аренды прокси
+     *
+     * @authenticated
+     */
+    public function extend(Request $request)
+    {
+        $request->validate([
+            "rental_days" => "required|numeric|min:1",
+        ]);
+
+        $order = Order::findOrFail($request->order_id);
+
+        throw_if($order->user_id !== $request->user()->id, new CustomException("Order is not yours."));
+
+        $proxy = $this->proxyService->extend($request->user(), $order, $request->proxy_id, $request->rental_days);
+
+        return $this->okResponse('Proxy rental period was extended', new ProxyResource($proxy));
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Proxy\ProxyManager;
 use Illuminate\Support\ServiceProvider;
 
 class ProxyServiceProvider extends ServiceProvider
@@ -13,7 +12,7 @@ class ProxyServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton("proxy_manager", function ($app) {
-            return new ProxyManager($app);
+            return new \App\Proxy\ProxyManager($app);
         });
     }
 

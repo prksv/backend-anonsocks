@@ -1,9 +1,10 @@
 name: Orders
 description: ''
 endpoints:
-  - httpMethods:
+  -
+    httpMethods:
       - GET
-    uri: api/v1/orders
+    uri: api/v1/order
     metadata:
       groupName: Orders
       groupDescription: ''
@@ -12,41 +13,43 @@ endpoints:
       title: 'Список заказов'
       description: 'Получить все заказы юзера'
       authenticated: true
-      custom: [ ]
+      custom: []
     headers:
       Content-Type: application/json
       Accept: application/json
-    urlParameters: [ ]
-    cleanUrlParameters: [ ]
-    queryParameters: [ ]
-    cleanQueryParameters: [ ]
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
     bodyParameters:
       full:
         name: full
         description: ''
         required: false
-        example: false
+        example: true
         type: boolean
-        custom: [ ]
+        custom: []
     cleanBodyParameters:
-      full: false
-    fileParameters: [ ]
+      full: true
+    fileParameters: []
     responses:
-      - status: 401
+      -
+        status: 401
         content: '{"success":false,"message":"Unauthenticated."}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
-        custom: [ ]
-    responseFields: [ ]
-    auth: [ ]
+        custom: []
+    responseFields: []
+    auth: []
     controller: null
     method: null
     route: null
-    custom: [ ]
-  - httpMethods:
+    custom: []
+  -
+    httpMethods:
       - POST
     uri: 'api/v1/proxy/{category}/buy'
     metadata:
@@ -57,7 +60,7 @@ endpoints:
       title: 'Купить прокси'
       description: ''
       authenticated: true
-      custom: [ ]
+      custom: []
     headers:
       Content-Type: application/json
       Accept: application/json
@@ -68,11 +71,11 @@ endpoints:
         required: false
         example: ipv6_64
         type: string
-        custom: [ ]
+        custom: []
     cleanUrlParameters:
       category: ipv6_64
-    queryParameters: [ ]
-    cleanQueryParameters: [ ]
+    queryParameters: []
+    cleanQueryParameters: []
     bodyParameters:
       country_code:
         name: country_code
@@ -80,30 +83,30 @@ endpoints:
         required: false
         example: UA
         type: string
-        custom: [ ]
+        custom: []
       count:
         name: count
         description: 'Must be at least 1.'
         required: true
-        example: 45
+        example: 40
         type: number
-        custom: [ ]
+        custom: []
       rental_days:
         name: rental_days
         description: 'Must be at least 1.'
         required: true
-        example: 65
+        example: 41
         type: number
-        custom: [ ]
+        custom: []
     cleanBodyParameters:
       country_code: UA
-      count: 45
-      rental_days: 65
-    fileParameters: [ ]
-    responses: [ ]
-    responseFields: [ ]
-    auth: [ ]
+      count: 40
+      rental_days: 41
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
     controller: null
     method: null
     route: null
-    custom: [ ]
+    custom: []

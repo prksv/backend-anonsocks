@@ -13,8 +13,10 @@ return new class extends Migration {
         Schema::create("categories", function (Blueprint $table) {
             $table->id();
             $table->string("name");
-            $table->integer("proxy_type_id");
-            $table->integer("proxy_provider_id");
+            $table->string("description");
+            $table->string("note");
+            $table->integer("proxy_type");
+            $table->integer("proxy_provider");
             $table->boolean("available")->default(true);
             $table->timestamps();
         });

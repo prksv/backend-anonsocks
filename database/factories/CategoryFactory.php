@@ -15,8 +15,8 @@ class CategoryFactory extends Factory
         return [
             "name" => $this->faker->name(),
             "price" => $this->faker->randomFloat(),
-            "proxy_type_id" => $this->faker->randomNumber(),
-            "proxy_provider_id" => $this->faker->randomNumber(),
+            "proxy_type" => $this->faker->randomNumber(),
+            "proxy_provider" => $this->faker->randomNumber(),
             "available" => $this->faker->boolean(),
             "created_at" => Carbon::now(),
             "updated_at" => Carbon::now(),

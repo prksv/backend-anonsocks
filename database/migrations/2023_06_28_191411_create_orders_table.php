@@ -12,18 +12,24 @@ return new class extends Migration {
     {
         Schema::create("orders", function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger("user_id");
-            $table
-                ->foreign("user_id")
-                ->references("id")
-                ->on("users");
             $table->unsignedBigInteger("rental_term_id");
             $table
                 ->foreign("rental_term_id")
                 ->references("id")
                 ->on("rental_terms");
-            $table->float("amount");
+            $table->unsignedBigInteger("user_id");
+            $table
+                ->foreign("user_id")
+                ->references("id")
+                ->on("users");
+            $table->unsignedBigInteger("category_id");
+            $table
+                ->foreign("category_id")
+                ->references("id")
+                ->on("categories");
             $table->integer("status");
+            $table->integer("proxy_count");
+            $table->string("country");
             $table->timestamps();
         });
     }

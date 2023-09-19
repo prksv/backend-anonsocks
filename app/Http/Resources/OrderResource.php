@@ -15,22 +15,17 @@ class OrderResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $extra = [];
-
-        if ($this->status === OrderStatus::DONE && count($this->proxies) > 0) {
-            $extra = [
-                "country" => $this->country,
-                "ip_type" => $this->type->getLabel(),
-                "proxy_count" => $this->proxies->count(),
-                "proxies" => ProxyResource::collection($this->proxies),
-            ];
-        }
-
         return [
             "id" => $this->id,
             "status" => $this->status->name,
             "amount" => $this->amount,
             "created_at" => $this->created_at,
-        ] + $extra;
+            "proxy_count" => $this->proxy_count,
+            "proxy_type" => $this->category->name,
+            "country" => $this->country,
+            $this->mergeWhen($this->isDone(), [
+                "proxies" => ProxyResource::collection($this->proxies),
+            ])
+        ];
     }
 }

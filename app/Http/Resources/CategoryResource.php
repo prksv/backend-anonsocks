@@ -17,6 +17,8 @@ class CategoryResource extends JsonResource
         return [
             "name" => $this->name,
             "available" => $this->available,
+            "description" => $this->description,
+            "note" => $this->note,
             "rental_terms" => RentalTermResource::collection($this->rentalTerms),
         ];
     }

@@ -13,4 +13,6 @@ interface ProxyDriverInterface
     public function sync(): void;
 
     public function formatProxy($proxy): array;
+
+    public function getCountries(): array;
 }

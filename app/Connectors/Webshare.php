@@ -279,4 +279,20 @@ class Webshare
         ]);
         return json_decode($response->getBody(), true);
     }
+
+    /**
+     * @throws GuzzleException
+     */
+    public function getCountries()
+    {
+        $response = $this->client->get("subscription/customize", [
+            "query" => [
+                "query" => json_encode([
+                    "proxy_type" => $this->proxyType,
+                    "proxy_subtype" => $this->proxySubType,
+                ]),
+            ],
+        ]);
+        return json_decode($response->getBody(), true)['available_countries'];
+    }
 }
